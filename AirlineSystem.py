@@ -117,6 +117,11 @@ class Register:
         )
         self.DOBInput.bind("<Enter>", self.datePicker)
         self.DOBInput.grid(row=3, column=1, pady=5)
+        # Gender
+        self.genderLabel = Label(
+            self.registerPage, text="Gender", bg="#51575A", padx=10, fg="#fff"
+        )
+        self.genderLabel.grid(column=0, row=4)
         # Phone Number
         self.numberLabel = Label(
             self.registerPage, text="Phone Number", bg="#51575A", padx=10, fg="#fff"
