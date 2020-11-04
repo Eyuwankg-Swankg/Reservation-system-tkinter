@@ -6,8 +6,6 @@ import pymongo
 import bcrypt
 import re
 
-
-
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # intialize DB
@@ -23,6 +21,29 @@ IndexPageImage = ImageTk.PhotoImage(Image.open("./HomePage.jpg"))
 
 # SignIn
 class SignIn:
+    def siginUser(self):
+        self.emailValidation = re.match(
+            "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+", self.emailInput.get()
+        )
+        if self.emailValidation == None:
+            messagebox.showerror("Error", "Please Enter Valid Email Address")
+            return
+
+        self.user = profileCollection.find_one({"email": self.emailInput.get()})
+
+        if self.user == None:
+            messagebox.showerror("Error", "User Does not exists")
+            return
+
+        if (
+            bcrypt.checkpw(
+                bytes(self.passwordInput.get(), "utf-8"), self.user["password"]
+            )
+            == False
+        ):
+            messagebox.showerror("Error", "Password does not match")
+            return
+        
     def __init__(self, parent):
         self.parent = parent
         self.signInPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
@@ -41,7 +62,7 @@ class SignIn:
         self.passwordInput = Entry(self.signInPage, show="*")
         self.passwordInput.grid(row=1, column=1, pady=5)
 
-        # Signin
+        # Signin Button
         self.signInButton = Button(
             self.signInPage,
             text="Sign In",
@@ -51,6 +72,7 @@ class SignIn:
             fg="#fff",
             relief=RAISED,
             bd=4,
+            command=self.siginUser,
         )
         self.signInButton.grid(row=2, column=1, columnspan=1, pady=20)
         self.signInPage.grid(row=0, column=0)
