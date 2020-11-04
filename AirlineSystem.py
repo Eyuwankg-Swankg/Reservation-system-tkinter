@@ -9,11 +9,12 @@ import re
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # intialize DB
-# mongoDB = pymongo.MongoClient(
-#     "mongodb+srv://Eyuwankg:eyuwankg@mern.kvhji.mongodb.net/OOAD?retryWrites=true&w=majority"
-# )
-# db = mongoDB["OOAD"]
-# profiles = db["profiles"]
+mongoDB = pymongo.MongoClient(
+    "mongodb+srv://Eyuwankg:eyuwankg@mern.kvhji.mongodb.net/OOAD?retryWrites=true&w=majority"
+)
+db = mongoDB["OOAD"]
+profileCollection = db["profiles"]
+
 # Intialize Home Page for all Frames
 Home = Tk()
 IndexPageImage = ImageTk.PhotoImage(Image.open("./HomePage.jpg"))
@@ -87,8 +88,20 @@ class Register:
         self.emailValidation = re.match(
             "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+", self.emailInput.get()
         )
+        self.phoneNumberValidation = re.match(
+            "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$", self.numberInput.get()
+        )
+        if self.genderVar.get() == 0:
+            messagebox.showerror("Error", "Please Select a Gender")
+            return
+        if self.phoneNumberValidation == None:
+            messagebox.showerror("Error", "Please Enter Valid Phone Number")
+            return
         if self.emailValidation == None:
             messagebox.showerror("Error", "Please Enter Valid Email Address")
+            return
+        if self.var1.get() == "Select":
+            messagebox.showerror("Error", "Select DOB")
             return
         userDetails = {
             "name": self.nameInput.get(),
@@ -96,11 +109,18 @@ class Register:
             "password": bcrypt.hashpw(
                 bytes(self.passwordInput.get(), "utf-8"), bcrypt.gensalt()
             ),
-            "dob":self.var1.get(),
-            "gender":"",
-            "phonenumber":""
+            "dob": self.var1.get(),
+            "gender": "Male" if self.genderVar.get() == 1 else "Female",
+            "phonenumber": self.numberInput.get(),
         }
-        print(userDetails)
+        key = profileCollection.find_one({"email": userDetails["email"]})
+        if key == None:
+            profileCollection.insert_one(userDetails)
+            messagebox.showinfo("Information", "Registred Successfully")
+        else:
+            messagebox.showinfo("Information", "Email Already Registered")
+        self.registerPage.destroy()
+        self.siginpage = SignIn(self.parent)
 
     def __init__(self, parent):
         self.parent = parent
