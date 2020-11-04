@@ -1,7 +1,10 @@
 from tkinter import *
 from tkcalendar import *
+from tkinter import messagebox
 from PIL import ImageTk, Image, ImageFile
 import pymongo
+import bcrypt
+import re
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -79,6 +82,26 @@ class Register:
         )
         self.calendarButton.pack()
 
+    # Register User
+    def registerUser(self):
+        self.emailValidation = re.match(
+            "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+", self.emailInput.get()
+        )
+        if self.emailValidation == None:
+            messagebox.showerror("Error", "Please Enter Valid Email Address")
+            return
+        userDetails = {
+            "name": self.nameInput.get(),
+            "email": self.emailInput.get(),
+            "password": bcrypt.hashpw(
+                bytes(self.passwordInput.get(), "utf-8"), bcrypt.gensalt()
+            ),
+            "dob":self.var1.get(),
+            "gender":"",
+            "phonenumber":""
+        }
+        print(userDetails)
+
     def __init__(self, parent):
         self.parent = parent
         self.registerPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
@@ -140,6 +163,21 @@ class Register:
         self.numberLabel.grid(column=0, row=5)
         self.numberInput = Entry(self.registerPage)
         self.numberInput.grid(row=5, column=1)
+        # Register Button
+        self.registerButton = Button(
+            self.registerPage,
+            text="Register",
+            activebackground="#403835",
+            activeforeground="#fff",
+            bg="#E7D5B5",
+            fg="#000",
+            relief=RAISED,
+            bd=4,
+            padx=20,
+            pady=5,
+            command=self.registerUser,
+        )
+        self.registerButton.grid(row=6, column=1, pady=20)
 
 
 # Index page
@@ -159,6 +197,8 @@ class IndexPage:
             fg="#fff",
             relief=RAISED,
             bd=4,
+            padx=7,
+            pady=3,
             command=self.directToRegister,
         )
         self.register.grid(row=1, column=0, pady=10)
@@ -172,6 +212,8 @@ class IndexPage:
             relief=RAISED,
             bd=4,
             command=self.directToSignIn,
+            padx=7,
+            pady=3,
         )
         self.signIn.grid(row=1, column=1, pady=10)
         self.index.grid(row=0, column=0)
