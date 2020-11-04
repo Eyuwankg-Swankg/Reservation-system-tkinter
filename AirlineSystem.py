@@ -58,14 +58,12 @@ class Register:
         self.var1.set(self.calendar.get_date())
         self.DOBInput.destroy()
         self.DOBInput = Button(
-            self.registerPage,
-            text=self.var1.get(),
+            self.registerPage, text=self.var1.get(), command=self.datePicker
         )
-        self.DOBInput.bind("<Enter>", self.datePicker)
         self.DOBInput.grid(row=3, column=1, pady=5)
 
     # Calendar
-    def datePicker(self, event):
+    def datePicker(self):
         self.calendarFrame = Tk()
         self.calendarFrame.title("Date Picker")
         self.calendar = Calendar(self.calendarFrame)
@@ -86,10 +84,16 @@ class Register:
         self.registerPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
         self.registerPage.grid(row=0, column=0)
         # Name
-        self.nameLabel = Label(self.registerPage, text="Name", bg="#51575A", fg="#fff")
+        self.nameLabel = Label(
+            self.registerPage,
+            text="Name",
+            bg="#51575A",
+            fg="#fff",
+            padx=10,
+        )
         self.nameLabel.grid(row=0, column=0)
         self.nameInput = Entry(self.registerPage)
-        self.nameInput.grid(row=0, column=1)
+        self.nameInput.grid(row=0, column=1, pady=5)
         # Email
         self.emailLabel = Label(
             self.registerPage, text="Email", bg="#51575A", fg="#fff"
@@ -112,23 +116,30 @@ class Register:
         )
         self.DOBLabel.grid(row=3, column=0)
         self.DOBInput = Button(
-            self.registerPage,
-            text=self.var1.get(),
+            self.registerPage, text=self.var1.get(), command=self.datePicker
         )
-        self.DOBInput.bind("<Enter>", self.datePicker)
         self.DOBInput.grid(row=3, column=1, pady=5)
         # Gender
         self.genderLabel = Label(
             self.registerPage, text="Gender", bg="#51575A", padx=10, fg="#fff"
         )
-        self.genderLabel.grid(column=0, row=4)
+        self.genderLabel.grid(column=0, row=4, pady=10)
+        self.genderVar = IntVar()
+        self.maleButton = Radiobutton(
+            self.registerPage, text="Male", variable=self.genderVar, value=1
+        )
+        self.femaleButton = Radiobutton(
+            self.registerPage, text="Female", variable=self.genderVar, value=2
+        )
+        self.maleButton.grid(row=4, column=1, pady=10)
+        self.femaleButton.grid(row=4, column=2, pady=10)
         # Phone Number
         self.numberLabel = Label(
             self.registerPage, text="Phone Number", bg="#51575A", padx=10, fg="#fff"
         )
         self.numberLabel.grid(column=0, row=5)
         self.numberInput = Entry(self.registerPage)
-        self.nameInput.grid(row=5, column=1)
+        self.numberInput.grid(row=5, column=1)
 
 
 # Index page
