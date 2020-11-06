@@ -25,13 +25,94 @@ IndexPageImage = ImageTk.PhotoImage(Image.open("./HomePage.jpg"))
 
 # Search Page
 class SearchPage:
+    allFlights = {}
+    date = []
+    departure = set()
+    arrival = set()
+
+    def displayFlights(self):
+        for (index, flightData) in enumerate(self.allFlights[self.selectedDate.get()]):
+            self.flightDisplayFrame = Frame(self.searchPage)
+            self.flightDisplayFrame.grid(column=0, row=index + 1)
+            
+
+    def getFromDate(self):
+        self.departure = set()
+        self.arrival = set()
+        for i in self.allFlights[self.selectedDate.get()]:
+            self.departure.add(i["departure"]["timezone"])
+            self.arrival.add(i["arrival"]["timezone"])
+        self.departureSelected = StringVar()
+        self.departureSelected.set("From")
+        self.arrivalSelected = StringVar()
+        self.arrivalSelected.set("To")
+
+        try:
+            if self.departureOption:
+                self.departureOption.destroy()
+        except:
+            pass
+        try:
+            if self.arrivalOption:
+                self.arrivalOption.destroy()
+        except:
+            pass
+
+        # depature list
+        self.departureOption = OptionMenu(
+            self.frameForPack, self.departureSelected, *self.departure
+        )
+        self.departureOption.pack(side=LEFT, padx=4)
+        # arrival list
+        self.arrivalOption = OptionMenu(
+            self.frameForPack, self.arrivalSelected, *self.arrival
+        )
+        self.arrivalOption.pack(side=RIGHT, padx=4)
+        # search button
+        self.searchButton = Button(
+            self.frameForPack,
+            text="Search",
+            activebackground="#333945",
+            activeforeground="#fff",
+            bg="#d34745",
+            fg="#fff",
+            relief=RAISED,
+            bd=4,
+            padx=5,
+            pady=3,
+            command=self.displayFlights,
+        )
+        self.searchButton.pack()
+
     def __init__(self, parent):
         self.parent = parent
         self.searchPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
         self.flightData = flightCollection.find()
         self.searchPage.grid(row=0, column=0)
         for flight in self.flightData:
-            print(flight["date"])
+            self.allFlights[flight["date"]] = flight["data"]
+            self.date.append(flight["date"])
+        self.frameForPack = Frame(self.searchPage)
+        # date list
+        self.selectedDate = StringVar()
+        self.selectedDate.set("Select Date")
+        self.dateOption = OptionMenu(self.frameForPack, self.selectedDate, *self.date)
+        self.dateOption.pack()
+        self.getFromTo = Button(
+            self.frameForPack,
+            text="Get",
+            activebackground="#d34745",
+            activeforeground="#fff",
+            bg="#333945",
+            fg="#fff",
+            relief=RAISED,
+            bd=4,
+            padx=3,
+            pady=2,
+            command=self.getFromDate,
+        )
+        self.getFromTo.pack(padx=10)
+        self.frameForPack.grid(row=0, column=0)
 
 
 # SignIn
@@ -61,6 +142,10 @@ class SignIn:
         self.signInPage.destroy()
         self.search = SearchPage(self.parent)
 
+    def goBack(self):
+        self.signInPage.destroy()
+        self.index = IndexPage(self.parent)
+
     def __init__(self, parent):
         self.parent = parent
         self.signInPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
@@ -85,17 +170,29 @@ class SignIn:
             text="Sign In",
             activebackground="#d34745",
             activeforeground="#fff",
-            bg="#31449E",
+            bg="#333945",
             fg="#fff",
             relief=RAISED,
             bd=4,
             command=self.siginUser,
         )
         self.signInButton.grid(row=2, column=1, columnspan=1, pady=20)
+        # Back Button
+        self.back = Button(
+            self.signInPage,
+            text="Back",
+            activebackground="#403835",
+            activeforeground="#fff",
+            bg="#4B1A23",
+            fg="#fff",
+            relief=RAISED,
+            bd=4,
+            command=self.goBack,
+        )
+        self.back.grid(row=2, column=2, pady=20)
         self.signInPage.grid(row=0, column=0)
 
 
-# email password name dob nationality gender
 # Register
 class Register:
     def getDate(self):
@@ -123,6 +220,11 @@ class Register:
             command=self.getDate,
         )
         self.calendarButton.pack()
+
+    # Go Back
+    def goBack(self):
+        self.registerPage.destroy()
+        self.index = IndexPage(self.parent)
 
     # Register User
     def registerUser(self):
@@ -165,7 +267,12 @@ class Register:
 
     def __init__(self, parent):
         self.parent = parent
-        self.registerPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
+        self.registerPage = Frame(
+            self.parent,
+            bg="#51575A",
+            padx=100,
+            pady=100,
+        )
         self.registerPage.grid(row=0, column=0)
         # Name
         self.nameLabel = Label(
@@ -230,17 +337,26 @@ class Register:
             text="Register",
             activebackground="#403835",
             activeforeground="#fff",
-            bg="#E7D5B5",
-            fg="#000",
+            bg="#333945",
+            fg="#fff",
             relief=RAISED,
             bd=4,
-            padx=20,
-            pady=5,
             command=self.registerUser,
         )
         self.registerButton.grid(row=6, column=1, pady=20)
-        #Back Button
-        
+        # Back Button
+        self.back = Button(
+            self.registerPage,
+            text="Back",
+            activebackground="#403835",
+            activeforeground="#fff",
+            bg="#4B1A23",
+            fg="#fff",
+            relief=RAISED,
+            bd=4,
+            command=self.goBack,
+        )
+        self.back.grid(row=6, column=2, pady=20)
 
 
 # Index page
