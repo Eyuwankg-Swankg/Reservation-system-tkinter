@@ -5,6 +5,9 @@ from PIL import ImageTk, Image, ImageFile
 import pymongo
 import bcrypt
 import re
+import pytz
+import datetime
+from dateutil import tz
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -14,10 +17,22 @@ mongoDB = pymongo.MongoClient(
 )
 db = mongoDB["OOAD"]
 profileCollection = db["profiles"]
+flightCollection = db["flights"]
 
 # Intialize Home Page for all Frames
 Home = Tk()
 IndexPageImage = ImageTk.PhotoImage(Image.open("./HomePage.jpg"))
+
+# Search Page
+class SearchPage:
+    def __init__(self, parent):
+        self.parent = parent
+        self.searchPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
+        self.flightData = flightCollection.find()
+        self.searchPage.grid(row=0, column=0)
+        for flight in self.flightData:
+            print(flight["date"])
+
 
 # SignIn
 class SignIn:
@@ -43,7 +58,9 @@ class SignIn:
         ):
             messagebox.showerror("Error", "Password does not match")
             return
-        
+        self.signInPage.destroy()
+        self.search = SearchPage(self.parent)
+
     def __init__(self, parent):
         self.parent = parent
         self.signInPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
@@ -222,6 +239,8 @@ class Register:
             command=self.registerUser,
         )
         self.registerButton.grid(row=6, column=1, pady=20)
+        #Back Button
+        
 
 
 # Index page
@@ -282,3 +301,12 @@ Home.title("Airline Ticket Reservation Sytem")
 
 container = Container(Home)
 Home.mainloop()
+# dt = datetime.datetime(2020, 11, 5, 0, 20)
+# a = pytz.timezone("Australia/Melbourne")
+# print(a.localize(dt))
+# utc = pytz.timezone("UTC")
+# print(utc.normalize(a.localize(dt)))
+
+# py = datetime.datetime(2020, 11, 4, 13, 20)
+# py = py.replace(tzinfo=tz.gettz("UTC"))
+# print(py.astimezone(tz.tzlocal()))
