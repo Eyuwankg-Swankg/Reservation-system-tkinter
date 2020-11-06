@@ -32,9 +32,23 @@ class SearchPage:
 
     def displayFlights(self):
         for (index, flightData) in enumerate(self.allFlights[self.selectedDate.get()]):
-            self.flightDisplayFrame = Frame(self.searchPage)
+            self.flightDisplayFrame = Frame(
+                self.searchPage, bg="#1287A5", padx=20, pady=10, width=100
+            )
+            self.airport = Label(self.flightDisplayFrame, text="Airport  :")
+            self.airport.grid(row=0, column=0)
+
+            self.departureAirport = Label(
+                self.flightDisplayFrame, text=flightData["departure"]["airport"]
+            )
+            self.departureAirport.grid(row=0, column=1, padx=10)
+
+            self.arrivalAirport = Label(
+                self.flightDisplayFrame, text=flightData["arrival"]["airport"]
+            )
+            self.arrivalAirport.grid(row=0, column=2, padx=10)
+
             self.flightDisplayFrame.grid(column=0, row=index + 1)
-            
 
     def getFromDate(self):
         self.departure = set()
@@ -86,7 +100,7 @@ class SearchPage:
 
     def __init__(self, parent):
         self.parent = parent
-        self.searchPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
+        self.searchPage = Frame(self.parent, bg="#51575A", padx=10, pady=10)
         self.flightData = flightCollection.find()
         self.searchPage.grid(row=0, column=0)
         for flight in self.flightData:
