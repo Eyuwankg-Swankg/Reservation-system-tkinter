@@ -31,24 +31,163 @@ class SearchPage:
     arrival = set()
 
     def displayFlights(self):
+        try:
+            if self.scrollFrame:
+                self.scrollFrame.destroy()
+        except:
+            pass
+        self.scrollFrame = Frame(self.searchPage, width=500)
+        print(type(self.scrollFrame))
+        self.canvas = Canvas(self.scrollFrame , width=500)
+        self.scrollBar = Scrollbar(
+            self.scrollFrame, orient=VERTICAL, command=self.canvas.yview
+        )
+        self.containerFrame = Frame(self.canvas, padx=10, width=400)
+        self.canvas.create_window((0, 0), window=self.containerFrame, anchor="nw")
         for (index, flightData) in enumerate(self.allFlights[self.selectedDate.get()]):
+            # ---------calculate Departure Time-----------
+            self.convertDepartureTime = datetime.datetime(
+                *flightData["departure"]["departureUTCTime"]
+            )
+            self.convertDepartureTime = self.convertDepartureTime.replace(
+                tzinfo=tz.gettz("UTC")
+            )
+            self.convertDepartureTime = self.convertDepartureTime.astimezone(
+                tz.tzlocal()
+            )
+            # -------------------------------------------
+            # ---------calculate Arrival Time------------
+            self.convertArrivalTime = datetime.datetime(
+                *flightData["arrival"]["arrivalUTCTime"]
+            )
+            self.convertArrivalTime = self.convertArrivalTime.replace(
+                tzinfo=tz.gettz("UTC")
+            )
+            self.convertArrivalTime = self.convertArrivalTime.astimezone(tz.tzlocal())
+            # -------------------------------------------
+            # check for current date
+            if self.selectedDate.get() != self.convertDepartureTime.strftime(
+                "%Y-%m-%d"
+            ):
+                # or (self.departureSelected.get() != flightData["departure"]["timezone"])
+                #     or (self.arrivalSelected.get() != flightData["arrival"]["timezone"])
+                continue
             self.flightDisplayFrame = Frame(
-                self.searchPage, bg="#1287A5", padx=20, pady=10, width=100
+                self.containerFrame, bg="#B9BFC7", padx=20, pady=10, width=200
             )
-            self.airport = Label(self.flightDisplayFrame, text="Airport  :")
-            self.airport.grid(row=0, column=0)
-
-            self.departureAirport = Label(
-                self.flightDisplayFrame, text=flightData["departure"]["airport"]
+            # row0 ----------------------------------------
+            self.emptySpace1 = Label(
+                self.flightDisplayFrame,
+                text="                                 ",
+                bg="#B9BFC7",
             )
-            self.departureAirport.grid(row=0, column=1, padx=10)
+            self.emptySpace1.grid(row=0, column=0)
 
-            self.arrivalAirport = Label(
-                self.flightDisplayFrame, text=flightData["arrival"]["airport"]
+            # airline Name
+            self.airlineName = Label(
+                self.flightDisplayFrame,
+                text=flightData["airlineName"],
+                font="Helvetica 12 bold",
+                bg="#B9BFC7",
             )
-            self.arrivalAirport.grid(row=0, column=2, padx=10)
+            self.airlineName.grid(row=0, column=1)
 
-            self.flightDisplayFrame.grid(column=0, row=index + 1)
+            self.emptySpace2 = Label(
+                self.flightDisplayFrame,
+                text="                                 ",
+                bg="#B9BFC7",
+            )
+            self.emptySpace2.grid(row=0, column=2)
+            # row0 ----------------------------------------
+            # row1 ----------------------------------------
+            # Airport Departure
+            self.airportDeparture = Label(
+                self.flightDisplayFrame,
+                text=flightData["departure"]["airport"],
+                bg="#B9BFC7",
+                font="Helvetica 8 bold",
+            )
+            self.airportDeparture.grid(row=1, column=0)
+
+            self.emptySpace3 = Label(
+                self.flightDisplayFrame,
+                text="                                 ",
+                bg="#B9BFC7",
+            )
+            self.emptySpace3.grid(row=1, column=1)
+
+            # Airport Arrival
+            self.airportArrival = Label(
+                self.flightDisplayFrame,
+                text=flightData["arrival"]["airport"],
+                bg="#B9BFC7",
+                font="Helvetica 8 bold",
+            )
+            self.airportArrival.grid(row=1, column=2)
+            # row1 ----------------------------------------
+
+            # row2 ----------------------------------------
+            # timezone Departure
+            self.timezoneDeparture = Label(
+                self.flightDisplayFrame,
+                text=flightData["departure"]["timezone"],
+                bg="#B9BFC7",
+                font="Helvetica 8 bold",
+            )
+            self.timezoneDeparture.grid(row=2, column=0)
+
+            self.emptySpace4 = Label(
+                self.flightDisplayFrame,
+                text="                                 ",
+                bg="#B9BFC7",
+            )
+            self.emptySpace4.grid(row=2, column=1)
+
+            # timezone Arrival
+            self.timezoneArrival = Label(
+                self.flightDisplayFrame,
+                text=flightData["arrival"]["timezone"],
+                bg="#B9BFC7",
+                font="Helvetica 8 bold",
+            )
+            self.timezoneArrival.grid(row=2, column=2)
+            # row2 ----------------------------------------
+
+            # row3 ----------------------------------------
+            # time Departure
+            self.departureTime = Label(
+                self.flightDisplayFrame,
+                text=self.convertDepartureTime.astimezone(tz.tzlocal()),
+                bg="#B9BFC7",
+                font="Helvetica 8 bold",
+            )
+            self.departureTime.grid(row=3, column=0)
+
+            self.emptySpace5 = Label(
+                self.flightDisplayFrame,
+                text="                                 ",
+                bg="#B9BFC7",
+            )
+            self.emptySpace5.grid(row=3, column=1)
+
+            # time Arrival
+            self.arrivalTime = Label(
+                self.flightDisplayFrame,
+                text=self.convertArrivalTime.astimezone(tz.tzlocal()),
+                bg="#B9BFC7",
+                font="Helvetica 8 bold",
+            )
+            self.arrivalTime.grid(row=3, column=2)
+            # row3 ----------------------------------------
+            self.flightDisplayFrame.pack(fill=BOTH, pady=10)
+        self.scrollBar.pack(side=RIGHT, fill=Y)
+        self.canvas.pack(fill=BOTH, expand=1, side=LEFT)
+        self.canvas.configure(yscrollcommand=self.scrollBar.set)
+        self.canvas.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")),
+        )
+        self.scrollFrame.pack(fill=BOTH, expand=1)
 
     def getFromDate(self):
         self.departure = set()
@@ -69,6 +208,11 @@ class SearchPage:
         try:
             if self.arrivalOption:
                 self.arrivalOption.destroy()
+        except:
+            pass
+        try:
+            if self.searchButton:
+                self.searchButton.destroy()
         except:
             pass
 
@@ -125,8 +269,8 @@ class SearchPage:
             pady=2,
             command=self.getFromDate,
         )
-        self.getFromTo.pack(padx=10)
-        self.frameForPack.grid(row=0, column=0)
+        self.getFromTo.pack(padx=10, pady=10)
+        self.frameForPack.pack(fill=BOTH, expand=1)
 
 
 # SignIn
@@ -428,7 +572,6 @@ class Container:
 
 
 Home.title("Airline Ticket Reservation Sytem")
-
 container = Container(Home)
 Home.mainloop()
 # dt = datetime.datetime(2020, 11, 5, 0, 20)
