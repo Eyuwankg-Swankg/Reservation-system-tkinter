@@ -31,14 +31,11 @@ class SearchPage:
     arrival = set()
 
     def displayFlights(self):
-        try:
-            if self.scrollFrame:
-                self.scrollFrame.destroy()
-        except:
-            pass
+        if self.intVar.get() == 0:
+            self.scrollFrame.destroy()
         self.scrollFrame = Frame(self.searchPage, width=500)
-        print(type(self.scrollFrame))
-        self.canvas = Canvas(self.scrollFrame , width=500)
+        self.intVar.set(0)
+        self.canvas = Canvas(self.scrollFrame, width=500)
         self.scrollBar = Scrollbar(
             self.scrollFrame, orient=VERTICAL, command=self.canvas.yview
         )
@@ -66,14 +63,15 @@ class SearchPage:
             self.convertArrivalTime = self.convertArrivalTime.astimezone(tz.tzlocal())
             # -------------------------------------------
             # check for current date
-            if self.selectedDate.get() != self.convertDepartureTime.strftime(
-                "%Y-%m-%d"
+            if (
+                self.selectedDate.get()
+                != self.convertDepartureTime.strftime("%Y-%m-%d")
+                or (self.departureSelected.get() != flightData["departure"]["timezone"])
+                or (self.arrivalSelected.get() != flightData["arrival"]["timezone"])
             ):
-                # or (self.departureSelected.get() != flightData["departure"]["timezone"])
-                #     or (self.arrivalSelected.get() != flightData["arrival"]["timezone"])
                 continue
             self.flightDisplayFrame = Frame(
-                self.containerFrame, bg="#B9BFC7", padx=20, pady=10, width=200
+                self.containerFrame, bg="#B9BFC7", padx=20, pady=10, width=210
             )
             # row0 ----------------------------------------
             self.emptySpace1 = Label(
@@ -81,7 +79,7 @@ class SearchPage:
                 text="                                 ",
                 bg="#B9BFC7",
             )
-            self.emptySpace1.grid(row=0, column=0)
+            self.emptySpace1.grid(row=0, column=0, pady=10)
 
             # airline Name
             self.airlineName = Label(
@@ -90,14 +88,14 @@ class SearchPage:
                 font="Helvetica 12 bold",
                 bg="#B9BFC7",
             )
-            self.airlineName.grid(row=0, column=1)
+            self.airlineName.grid(row=0, column=1, pady=10)
 
             self.emptySpace2 = Label(
                 self.flightDisplayFrame,
                 text="                                 ",
                 bg="#B9BFC7",
             )
-            self.emptySpace2.grid(row=0, column=2)
+            self.emptySpace2.grid(row=0, column=2, pady=10)
             # row0 ----------------------------------------
             # row1 ----------------------------------------
             # Airport Departure
@@ -106,15 +104,16 @@ class SearchPage:
                 text=flightData["departure"]["airport"],
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
+                wraplength=150,
             )
-            self.airportDeparture.grid(row=1, column=0)
+            self.airportDeparture.grid(row=1, column=0, pady=10)
 
             self.emptySpace3 = Label(
                 self.flightDisplayFrame,
                 text="                                 ",
                 bg="#B9BFC7",
             )
-            self.emptySpace3.grid(row=1, column=1)
+            self.emptySpace3.grid(row=1, column=1, pady=10)
 
             # Airport Arrival
             self.airportArrival = Label(
@@ -122,8 +121,9 @@ class SearchPage:
                 text=flightData["arrival"]["airport"],
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
+                wraplength=150,
             )
-            self.airportArrival.grid(row=1, column=2)
+            self.airportArrival.grid(row=1, column=2, pady=10)
             # row1 ----------------------------------------
 
             # row2 ----------------------------------------
@@ -133,15 +133,16 @@ class SearchPage:
                 text=flightData["departure"]["timezone"],
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
+                wraplength=150,
             )
-            self.timezoneDeparture.grid(row=2, column=0)
+            self.timezoneDeparture.grid(row=2, column=0, pady=10)
 
             self.emptySpace4 = Label(
                 self.flightDisplayFrame,
                 text="                                 ",
                 bg="#B9BFC7",
             )
-            self.emptySpace4.grid(row=2, column=1)
+            self.emptySpace4.grid(row=2, column=1, pady=10)
 
             # timezone Arrival
             self.timezoneArrival = Label(
@@ -149,36 +150,48 @@ class SearchPage:
                 text=flightData["arrival"]["timezone"],
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
+                wraplength=150,
             )
-            self.timezoneArrival.grid(row=2, column=2)
+            self.timezoneArrival.grid(row=2, column=2, pady=10)
             # row2 ----------------------------------------
 
             # row3 ----------------------------------------
             # time Departure
             self.departureTime = Label(
                 self.flightDisplayFrame,
-                text=self.convertDepartureTime.astimezone(tz.tzlocal()),
+                text=self.convertDepartureTime.astimezone(tz.tzlocal()).strftime(
+                    "%H : %M : %S"
+                ),
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
+                wraplength=150,
             )
-            self.departureTime.grid(row=3, column=0)
+            self.departureTime.grid(row=3, column=0, pady=10)
 
             self.emptySpace5 = Label(
                 self.flightDisplayFrame,
                 text="                                 ",
                 bg="#B9BFC7",
             )
-            self.emptySpace5.grid(row=3, column=1)
+            self.emptySpace5.grid(row=3, column=1, pady=10)
 
             # time Arrival
             self.arrivalTime = Label(
                 self.flightDisplayFrame,
-                text=self.convertArrivalTime.astimezone(tz.tzlocal()),
+                text=self.convertArrivalTime.astimezone(tz.tzlocal()).strftime(
+                    "%H : %M : %S"
+                ),
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
+                wraplength=150,
             )
-            self.arrivalTime.grid(row=3, column=2)
+            self.arrivalTime.grid(row=3, column=2, pady=10)
             # row3 ----------------------------------------
+
+            # row4 ----------------------------------------
+            
+            # row4 ----------------------------------------
+
             self.flightDisplayFrame.pack(fill=BOTH, pady=10)
         self.scrollBar.pack(side=RIGHT, fill=Y)
         self.canvas.pack(fill=BOTH, expand=1, side=LEFT)
@@ -244,6 +257,8 @@ class SearchPage:
 
     def __init__(self, parent):
         self.parent = parent
+        self.intVar = IntVar()
+        self.intVar.set(1)
         self.searchPage = Frame(self.parent, bg="#51575A", padx=10, pady=10)
         self.flightData = flightCollection.find()
         self.searchPage.grid(row=0, column=0)
