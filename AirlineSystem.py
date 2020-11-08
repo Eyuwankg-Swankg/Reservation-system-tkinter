@@ -8,6 +8,7 @@ import re
 import pytz
 import datetime
 from dateutil import tz
+import random
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -103,7 +104,7 @@ class SearchPage:
                 self.flightDisplayFrame,
                 text=flightData["departure"]["airport"],
                 bg="#B9BFC7",
-                font="Helvetica 8 bold",
+                font="Helvetica 9 bold",
                 wraplength=150,
             )
             self.airportDeparture.grid(row=1, column=0, pady=10)
@@ -120,7 +121,7 @@ class SearchPage:
                 self.flightDisplayFrame,
                 text=flightData["arrival"]["airport"],
                 bg="#B9BFC7",
-                font="Helvetica 8 bold",
+                font="Helvetica 9 bold",
                 wraplength=150,
             )
             self.airportArrival.grid(row=1, column=2, pady=10)
@@ -189,7 +190,27 @@ class SearchPage:
             # row3 ----------------------------------------
 
             # row4 ----------------------------------------
-            
+            self.emptySpace6 = Label(
+                self.flightDisplayFrame,
+                text="                                 ",
+                bg="#B9BFC7",
+            )
+            self.tripCost = random.randint(20000, 35000)
+            self.emptySpace6.grid(row=4, column=0, pady=10)
+            self.totalCost = Label(
+                self.flightDisplayFrame,
+                text="Cost : " + str(self.tripCost),
+                font="Helvetica 12 bold",
+                bg="#B9BFC7",
+            )
+            self.emptySpace7 = Label(
+                self.flightDisplayFrame,
+                text="                                 ",
+                bg="#B9BFC7",
+            )
+            self.totalCost.grid(row=4, column=1, pady=10)
+            self.emptySpace7.grid(row=4, column=2, pady=10)
+
             # row4 ----------------------------------------
 
             self.flightDisplayFrame.pack(fill=BOTH, pady=10)
