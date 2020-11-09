@@ -31,16 +31,19 @@ class SearchPage:
     departure = set()
     arrival = set()
 
+    def showFlightInfo(self):
+        print("Works!")
+
     def displayFlights(self):
         if self.intVar.get() == 0:
             self.scrollFrame.destroy()
-        self.scrollFrame = Frame(self.searchPage, width=500)
+        self.scrollFrame = Frame(self.searchPage, width=450)
         self.intVar.set(0)
-        self.canvas = Canvas(self.scrollFrame, width=500)
+        self.canvas = Canvas(self.scrollFrame, width=450)
         self.scrollBar = Scrollbar(
             self.scrollFrame, orient=VERTICAL, command=self.canvas.yview
         )
-        self.containerFrame = Frame(self.canvas, padx=10, width=400)
+        self.containerFrame = Frame(self.canvas, padx=10, width=380)
         self.canvas.create_window((0, 0), window=self.containerFrame, anchor="nw")
         for (index, flightData) in enumerate(self.allFlights[self.selectedDate.get()]):
             # ---------calculate Departure Time-----------
@@ -64,9 +67,8 @@ class SearchPage:
             self.convertArrivalTime = self.convertArrivalTime.astimezone(tz.tzlocal())
             # -------------------------------------------
             # check for current date
-            if (
-                self.selectedDate.get()
-                != self.convertDepartureTime.strftime("%Y-%m-%d")
+            if self.selectedDate.get() != self.convertDepartureTime.strftime(
+                "%Y-%m-%d"
                 or (self.departureSelected.get() != flightData["departure"]["timezone"])
                 or (self.arrivalSelected.get() != flightData["arrival"]["timezone"])
             ):
@@ -122,7 +124,7 @@ class SearchPage:
                 text=flightData["arrival"]["airport"],
                 bg="#B9BFC7",
                 font="Helvetica 9 bold",
-                wraplength=150,
+                wraplength=100,
             )
             self.airportArrival.grid(row=1, column=2, pady=10)
             # row1 ----------------------------------------
@@ -151,7 +153,7 @@ class SearchPage:
                 text=flightData["arrival"]["timezone"],
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
-                wraplength=150,
+                wraplength=130,
             )
             self.timezoneArrival.grid(row=2, column=2, pady=10)
             # row2 ----------------------------------------
@@ -161,11 +163,11 @@ class SearchPage:
             self.departureTime = Label(
                 self.flightDisplayFrame,
                 text=self.convertDepartureTime.astimezone(tz.tzlocal()).strftime(
-                    "%H : %M : %S"
+                    "%Y/%m/%d  %H:%M:%S"
                 ),
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
-                wraplength=150,
+                wraplength=100,
             )
             self.departureTime.grid(row=3, column=0, pady=10)
 
@@ -180,11 +182,11 @@ class SearchPage:
             self.arrivalTime = Label(
                 self.flightDisplayFrame,
                 text=self.convertArrivalTime.astimezone(tz.tzlocal()).strftime(
-                    "%H : %M : %S"
+                    "%Y/%m/%d  %H:%M:%S"
                 ),
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
-                wraplength=150,
+                wraplength=100,
             )
             self.arrivalTime.grid(row=3, column=2, pady=10)
             # row3 ----------------------------------------
@@ -214,6 +216,9 @@ class SearchPage:
             # row4 ----------------------------------------
 
             self.flightDisplayFrame.pack(fill=BOTH, pady=10)
+            self.flightDisplayFrame.bind(
+                "<Button-1>", lambda event: self.showFlightInfo()
+            )
         self.scrollBar.pack(side=RIGHT, fill=Y)
         self.canvas.pack(fill=BOTH, expand=1, side=LEFT)
         self.canvas.configure(yscrollcommand=self.scrollBar.set)
