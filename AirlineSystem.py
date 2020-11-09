@@ -31,11 +31,17 @@ class SearchPage:
     departure = set()
     arrival = set()
 
-    def showFlightInfo(self, flightOneData, deptTime, arrTime):
+    def showFlightInfo(self, flightOneData, deptTime, arrTime, cost):
         self.flightOne = Tk()
-        self.flightOne.geometry("400x500")
-        k = Frame(self.flightOne, bg="#8ecae6")
-        k.pack(fill=BOTH, expand=1)
+        self.flightOne.geometry("455x500")
+        infoDisplay = Frame(self.flightOne, bg="#8ecae6")
+        empty_space = Label(infoDisplay, text="                   ", width=150)
+        departure = Label(infoDisplay, text="Departure")
+        arrival = Label(infoDisplay, text="Arrival", width=150)
+        # empty_space.grid(row=0, column=0)
+        departure.grid(row=0, column=0)
+        # arrival.grid(row=0, column=2)
+        infoDisplay.pack(fill=BOTH, expand=1)
         self.flightOne.mainloop()
 
     def displayFlights(self):
@@ -226,7 +232,10 @@ class SearchPage:
             self.flightDisplayFrame.bind(
                 "<Button-1>",
                 lambda event: self.showFlightInfo(
-                    self.details, self.departureSelected, self.arrivalSelected
+                    self.details,
+                    self.departureSelected,
+                    self.arrivalSelected,
+                    self.totalCost,
                 ),
             )
         self.scrollBar.pack(side=RIGHT, fill=Y)
