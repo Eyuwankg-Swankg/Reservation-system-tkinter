@@ -31,8 +31,12 @@ class SearchPage:
     departure = set()
     arrival = set()
 
-    def showFlightInfo(self):
-        print("Works!")
+    def showFlightInfo(self, flightOneData, deptTime, arrTime):
+        self.flightOne = Tk()
+        self.flightOne.geometry("400x500")
+        k = Frame(self.flightOne, bg="#8ecae6")
+        k.pack(fill=BOTH, expand=1)
+        self.flightOne.mainloop()
 
     def displayFlights(self):
         if self.intVar.get() == 0:
@@ -67,14 +71,21 @@ class SearchPage:
             self.convertArrivalTime = self.convertArrivalTime.astimezone(tz.tzlocal())
             # -------------------------------------------
             # check for current date
-            if self.selectedDate.get() != self.convertDepartureTime.strftime(
-                "%Y-%m-%d"
+            if (
+                (
+                    self.selectedDate.get()
+                    != self.convertDepartureTime.strftime("%Y-%m-%d")
+                )
                 or (self.departureSelected.get() != flightData["departure"]["timezone"])
                 or (self.arrivalSelected.get() != flightData["arrival"]["timezone"])
             ):
                 continue
             self.flightDisplayFrame = Frame(
-                self.containerFrame, bg="#B9BFC7", padx=20, pady=10, width=210
+                self.containerFrame,
+                bg="#B9BFC7",
+                padx=20,
+                pady=10,
+                width=210,
             )
             # row0 ----------------------------------------
             self.emptySpace1 = Label(
@@ -162,9 +173,7 @@ class SearchPage:
             # time Departure
             self.departureTime = Label(
                 self.flightDisplayFrame,
-                text=self.convertDepartureTime.astimezone(tz.tzlocal()).strftime(
-                    "%Y/%m/%d  %H:%M:%S"
-                ),
+                text=self.convertDepartureTime.strftime("%Y/%m/%d  %H:%M:%S"),
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
                 wraplength=100,
@@ -181,9 +190,7 @@ class SearchPage:
             # time Arrival
             self.arrivalTime = Label(
                 self.flightDisplayFrame,
-                text=self.convertArrivalTime.astimezone(tz.tzlocal()).strftime(
-                    "%Y/%m/%d  %H:%M:%S"
-                ),
+                text=self.convertArrivalTime.strftime("%Y/%m/%d  %H:%M:%S"),
                 bg="#B9BFC7",
                 font="Helvetica 8 bold",
                 wraplength=100,
@@ -214,10 +221,13 @@ class SearchPage:
             self.emptySpace7.grid(row=4, column=2, pady=10)
 
             # row4 ----------------------------------------
-
+            self.details = flightData
             self.flightDisplayFrame.pack(fill=BOTH, pady=10)
             self.flightDisplayFrame.bind(
-                "<Button-1>", lambda event: self.showFlightInfo()
+                "<Button-1>",
+                lambda event: self.showFlightInfo(
+                    self.details, self.departureSelected, self.arrivalSelected
+                ),
             )
         self.scrollBar.pack(side=RIGHT, fill=Y)
         self.canvas.pack(fill=BOTH, expand=1, side=LEFT)
