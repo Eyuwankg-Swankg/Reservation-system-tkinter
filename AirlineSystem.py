@@ -357,31 +357,9 @@ class SearchPage:
         # row10--------------------------------------------------
         # row11--------------------------------------------------
         # display all the seats----------------------------------
-
-        # function to select a seat
-        # def bookSeat(index, column, item):
-        #     print(bookedSeats)
-        #     if len(bookedSeats) == 10:
-        #         messagebox.showerror("Error", "Cant Select more than 10")
-        #         return
-        #     check = {"row": ascii_uppercase[index], "column": column}
-        #     if check in bookedSeats:
-        #         bookedSeats.remove(check)
-        #     else:
-        #         bookedSeats.append(check)
-        #     item.destroy()
-        #     item = Button(
-        #         seatLayoutContainer,
-        #         text=str(column),
-        #         width=seatWidth,
-        #         bg=selectedSeat
-        #         if {"row": ascii_uppercase[index], "column": column} in bookedSeats
-        #         else (backgroundSeat if data["seatsGraph"][index][0] else "#e16162"),
-        #         state=NORMAL if data["seatsGraph"][index][0] else DISABLED,
-        #     )
-        #     item.bind("<Button-1>", lambda event, i=index, a=item: bookSeat(i, 0, a))
-        #     item.grid(row=index, column=column, pady=padYAxis, padx=padXAxis)
         self.showSeatGraph(data)
+        self.bookTickets = Button(self.containerFrameOne, text="Book Your Tickets")
+        self.bookTickets.grid(row=12, column=1, columnspan=2, rowspan=2)
         app.mainloop()
 
     def displayFlights(self):
