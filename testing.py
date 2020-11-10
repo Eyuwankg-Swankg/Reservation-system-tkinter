@@ -22,9 +22,38 @@ data = {
     "travelTime": {"hours": 1, "minutes": 40},
     "airlineName": "Longhao Airlines",
     "flightNumber": "4028",
+    "seatsGraph": [
+        [1, 1, 1, 1, 1, 1],
+        [0, 0, 1, 1, 1, 1],
+        [0, 0, 1, 0, 1, 1],
+        [1, 0, 1, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 1, 1, 0],
+        [0, 1, 1, 0, 1, 0],
+        [0, 1, 1, 1, 1, 1],
+        [1, 1, 1, 0, 0, 0],
+        [1, 1, 0, 0, 0, 1],
+        [1, 1, 0, 1, 0, 1],
+        [1, 1, 1, 1, 0, 1],
+        [1, 1, 0, 1, 1, 0],
+        [1, 1, 1, 0, 0, 0],
+        [0, 1, 1, 1, 1, 1],
+        [1, 1, 0, 0, 1, 1],
+        [1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 0, 0, 0],
+        [0, 0, 1, 1, 1, 0],
+        [0, 0, 1, 0, 0, 1],
+        [0, 1, 1, 0, 1, 1],
+        [0, 0, 1, 1, 1, 0],
+        [1, 0, 0, 1, 1, 0],
+        [1, 0, 1, 1, 1, 0],
+        [0, 1, 0, 0, 1, 1],
+    ],
 }
 app = Tk()
 app.geometry("450x400")
+bookedSeats = []
 canvasOne = Canvas(app, width=450, bg="#8ecae6")
 scrollBarOne = Scrollbar(app, orient=VERTICAL, command=canvasOne.yview)
 containerFrameOne = Frame(canvasOne, padx=10, width=380, bg="#8ecae6")
@@ -243,21 +272,55 @@ padXAxis = 6
 backgroundSeat = "#f9bc60"
 seatLayoutContainer = Frame(containerFrameOne, bg="#004643")
 for (index, char) in enumerate(ascii_uppercase):
-    seatZero = Button(seatLayoutContainer, text="0", width=seatWidth, bg=backgroundSeat)
+    seatZero = Button(
+        seatLayoutContainer,
+        text="0",
+        width=seatWidth,
+        bg=backgroundSeat if data["seatsGraph"][index][0] else "#e16162",
+        state=NORMAL if data["seatsGraph"][index][0] else DISABLED,
+    )
     seatZero.grid(row=index, column=0, pady=padYAxis, padx=padXAxis)
-    seatOne = Button(seatLayoutContainer, text="1", width=seatWidth, bg=backgroundSeat)
+    seatOne = Button(
+        seatLayoutContainer,
+        text="1",
+        width=seatWidth,
+        bg=backgroundSeat if data["seatsGraph"][index][1] else "#e16162",
+        state=NORMAL if data["seatsGraph"][index][1] else DISABLED,
+    )
     seatOne.grid(row=index, column=1, pady=padYAxis, padx=padXAxis)
-    seatTwo = Button(seatLayoutContainer, text="2", width=seatWidth, bg=backgroundSeat)
+    seatTwo = Button(
+        seatLayoutContainer,
+        text="2",
+        width=seatWidth,
+        bg=backgroundSeat if data["seatsGraph"][index][2] else "#e16162",
+        state=NORMAL if data["seatsGraph"][index][2] else DISABLED,
+    )
     seatTwo.grid(row=index, column=2, pady=padYAxis, padx=padXAxis)
     seatIdLabel = Label(seatLayoutContainer, text=char, fg="#fff", bg="#004643")
     seatIdLabel.grid(row=index, column=3, pady=padYAxis, padx=padXAxis)
     seatThree = Button(
-        seatLayoutContainer, text="3", width=seatWidth, bg=backgroundSeat
+        seatLayoutContainer,
+        text="3",
+        width=seatWidth,
+        bg=backgroundSeat if data["seatsGraph"][index][3] else "#e16162",
+        state=NORMAL if data["seatsGraph"][index][3] else DISABLED,
     )
     seatThree.grid(row=index, column=4, pady=padYAxis, padx=padXAxis)
-    seatFour = Button(seatLayoutContainer, text="4", width=seatWidth, bg=backgroundSeat)
+    seatFour = Button(
+        seatLayoutContainer,
+        text="4",
+        width=seatWidth,
+        bg=backgroundSeat if data["seatsGraph"][index][4] else "#e16162",
+        state=NORMAL if data["seatsGraph"][index][4] else DISABLED,
+    )
     seatFour.grid(row=index, column=5, pady=padYAxis, padx=padXAxis)
-    seatFive = Button(seatLayoutContainer, text="5", width=seatWidth, bg=backgroundSeat)
+    seatFive = Button(
+        seatLayoutContainer,
+        text="5",
+        width=seatWidth,
+        bg=backgroundSeat if data["seatsGraph"][index][5] else "#e16162",
+        state=NORMAL if data["seatsGraph"][index][5] else DISABLED,
+    )
     seatFive.grid(row=index, column=6, pady=padYAxis, padx=padXAxis)
 seatLayoutContainer.grid(row=11, column=0, columnspan=4, pady=10)
 # row11--------------------------------------------------
