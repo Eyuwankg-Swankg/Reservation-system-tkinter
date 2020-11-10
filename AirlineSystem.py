@@ -32,6 +32,17 @@ class SearchPage:
     departure = set()
     arrival = set()
 
+    def updateSeatBookings(self, data, index, col):
+        check = {"row": ascii_uppercase[index], "column": col}
+        if check not in self.bookedSeats:
+            if len(self.bookedSeats) == 10:
+                messagebox.showerror("Error", "Maximum 10 seats can be selected")
+            else:
+                self.bookedSeats.append(check)
+        else:
+            self.bookedSeats.remove(check)
+        self.showSeatGraph(data)
+
     def showSeatGraph(self, data):
         try:
             if self.seatLayoutContainer:
@@ -53,7 +64,7 @@ class SearchPage:
                 if {"row": char, "column": 0} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][0] else "#e16162"),
                 state=NORMAL if data["seatsGraph"][index][0] else DISABLED,
-                lambda d=data: updateSeatBooking(data)
+                command=lambda d=data, i=index: self.updateSeatBookings(data, i, 0),
             )
             self.seatZero.grid(row=index, column=0, pady=padYAxis, padx=padXAxis)
             self.seatOne = Button(
@@ -64,6 +75,7 @@ class SearchPage:
                 if {"row": char, "column": 1} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][1] else "#e16162"),
                 state=NORMAL if data["seatsGraph"][index][1] else DISABLED,
+                command=lambda d=data, i=index: self.updateSeatBookings(data, i, 1),
             )
             self.seatOne.grid(row=index, column=1, pady=padYAxis, padx=padXAxis)
             self.seatTwo = Button(
@@ -74,6 +86,7 @@ class SearchPage:
                 if {"row": char, "column": 2} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][2] else "#e16162"),
                 state=NORMAL if data["seatsGraph"][index][2] else DISABLED,
+                command=lambda d=data, i=index: self.updateSeatBookings(data, i, 2),
             )
             self.seatTwo.grid(row=index, column=2, pady=padYAxis, padx=padXAxis)
             seatIdLabel = Label(
@@ -88,6 +101,7 @@ class SearchPage:
                 if {"row": char, "column": 3} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][3] else "#e16162"),
                 state=NORMAL if data["seatsGraph"][index][3] else DISABLED,
+                command=lambda d=data, i=index: self.updateSeatBookings(data, i, 3),
             )
             self.seatThree.grid(row=index, column=4, pady=padYAxis, padx=padXAxis)
             self.seatFour = Button(
@@ -98,6 +112,7 @@ class SearchPage:
                 if {"row": char, "column": 4} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][4] else "#e16162"),
                 state=NORMAL if data["seatsGraph"][index][4] else DISABLED,
+                command=lambda d=data, i=index: self.updateSeatBookings(data, i, 4),
             )
             self.seatFour.grid(row=index, column=5, pady=padYAxis, padx=padXAxis)
             self.seatFive = Button(
@@ -108,7 +123,7 @@ class SearchPage:
                 if {"row": char, "column": 5} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][5] else "#e16162"),
                 state=NORMAL if data["seatsGraph"][index][5] else DISABLED,
-                command=lambda i=index: bookSeat(i, 5),
+                command=lambda d=data, i=index: self.updateSeatBookings(data, i, 5),
             )
             self.seatFive.grid(row=index, column=6, pady=padYAxis, padx=padXAxis)
             self.seatLayoutContainer.grid(row=11, column=0, columnspan=4, pady=10)
