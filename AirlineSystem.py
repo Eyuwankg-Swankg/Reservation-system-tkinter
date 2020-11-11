@@ -32,6 +32,37 @@ class SearchPage:
     departure = set()
     arrival = set()
 
+    def confirmBooking(self, data, deptTime, arrTime, cost):
+        try:
+            if self.app:
+                self.app.destroy()
+        except:
+            pass
+        print(
+            data,
+            deptTime.strftime("%Y/%m/%d %H:%M:%S"),
+            arrTime.strftime("%Y/%m/%d %H:%M:%S"),
+            cost,
+            self.bookedSeats,
+            self.user,
+            sep="\n",
+        )
+        self.app = Tk()
+        self.app.geometry("450x400")
+        self.app.configure(bg="#232946")
+        backButton = Button(
+            self.app,
+            text="Back",
+            bg="#eebbc3",
+            padx=10,
+            pady=5,
+            command=lambda d=data, dT=deptTime, aT=arrTime, c=cost: self.showFlightInfo(
+                d, dT, aT, c
+            ),
+        )
+        backButton.grid(row=0, column=0, pady=20, padx=20)
+        self.app.mainloop()
+
     def updateSeatBookings(self, data, index, col):
         check = {"row": ascii_uppercase[index], "column": col}
         if check not in self.bookedSeats:
@@ -130,12 +161,17 @@ class SearchPage:
         # row11--------------------------------------------------
 
     def showFlightInfo(self, data, deptTime, arrTime, cost):
-        app = Tk()
-        app.geometry("450x400")
+        try:
+            if self.app:
+                self.app.destroy()
+        except:
+            pass
+        self.app = Tk()
+        self.app.geometry("450x400")
         self.bookedSeats = []
-        self.canvasOne = Canvas(app, width=450, bg="#8ecae6")
+        self.canvasOne = Canvas(self.app, width=450, bg="#8ecae6")
         self.scrollBarOne = Scrollbar(
-            app, orient=VERTICAL, command=self.canvasOne.yview
+            self.app, orient=VERTICAL, command=self.canvasOne.yview
         )
         self.containerFrameOne = Frame(self.canvasOne, padx=10, width=380, bg="#8ecae6")
         self.canvasOne.create_window((0, 0), window=self.containerFrameOne, anchor="nw")
@@ -358,9 +394,15 @@ class SearchPage:
         # row11--------------------------------------------------
         # display all the seats----------------------------------
         self.showSeatGraph(data)
-        self.bookTickets = Button(self.containerFrameOne, text="Book Your Tickets")
-        self.bookTickets.grid(row=12, column=1, columnspan=2, rowspan=2)
-        app.mainloop()
+        self.bookTickets = Button(
+            self.containerFrameOne,
+            text="Book Your Tickets",
+            command=lambda d=data, dT=deptTime, aT=arrTime, c=cost: self.confirmBooking(
+                d, dT, aT, c
+            ),
+        )
+        self.bookTickets.grid(row=12, column=0, columnspan=3, rowspan=2, pady=20)
+        self.app.mainloop()
 
     def displayFlights(self):
         if self.intVar.get() == 0:
@@ -619,8 +661,9 @@ class SearchPage:
         )
         self.searchButton.pack()
 
-    def __init__(self, parent):
+    def __init__(self, parent, user):
         self.parent = parent
+        self.user = user
         self.intVar = IntVar()
         self.intVar.set(1)
         self.searchPage = Frame(self.parent, bg="#51575A", padx=10, pady=10)
@@ -677,7 +720,7 @@ class SignIn:
             messagebox.showerror("Error", "Password does not match")
             return
         self.signInPage.destroy()
-        self.search = SearchPage(self.parent)
+        self.search = SearchPage(self.parent, self.user)
 
     def goBack(self):
         self.signInPage.destroy()

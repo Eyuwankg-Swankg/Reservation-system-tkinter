@@ -4,324 +4,191 @@ import datetime
 
 data = {
     "departure": {
-        "airport": "Tianjin Binhai International",
+        "airport": "Shenzhen",
         "timezone": "Asia/Shanghai",
-        "terminal": None,
-        "iata": "TSN",
-        "departureUTCTime": [2020, 11, 8, 18, 50],
+        "terminal": "T3",
+        "iata": "SZX",
+        "departureUTCTime": [2020, 11, 11, 12, 0],
         "gate": None,
     },
     "arrival": {
-        "airport": "Wuxi",
+        "airport": "Fenghuang International (Phoenix International)",
         "timezone": "Asia/Shanghai",
         "terminal": "T2",
-        "iata": "WUX",
-        "arrivalUTCTime": [2020, 11, 8, 20, 30],
+        "iata": "SYX",
+        "arrivalUTCTime": [2020, 11, 11, 13, 45],
         "gate": None,
     },
-    "travelTime": {"hours": 1, "minutes": 40},
-    "airlineName": "Longhao Airlines",
-    "flightNumber": "4028",
+    "travelTime": {"hours": 1, "minutes": 45},
+    "airlineName": "Juneyao Airlines",
+    "flightNumber": "5131",
     "seatsGraph": [
-        [1, 1, 1, 1, 1, 1],
-        [0, 0, 1, 1, 1, 1],
-        [0, 0, 1, 0, 1, 1],
-        [1, 0, 1, 1, 0, 0],
-        [0, 0, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1],
-        [1, 0, 1, 1, 1, 0],
-        [0, 1, 1, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1],
-        [1, 1, 1, 0, 0, 0],
-        [1, 1, 0, 0, 0, 1],
-        [1, 1, 0, 1, 0, 1],
-        [1, 1, 1, 1, 0, 1],
-        [1, 1, 0, 1, 1, 0],
-        [1, 1, 1, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1],
-        [1, 1, 0, 0, 1, 1],
-        [1, 1, 1, 1, 1, 1],
-        [1, 0, 1, 0, 0, 0],
-        [0, 0, 1, 1, 1, 0],
-        [0, 0, 1, 0, 0, 1],
+        [0, 1, 1, 1, 1, 0],
+        [0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 0],
         [0, 1, 1, 0, 1, 1],
+        [1, 1, 1, 1, 1, 1],
+        [0, 1, 0, 1, 0, 1],
+        [0, 1, 1, 1, 1, 1],
+        [1, 1, 1, 0, 1, 0],
+        [1, 0, 1, 1, 1, 1],
+        [1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 1, 1, 1],
+        [0, 1, 1, 0, 0, 0],
+        [0, 1, 0, 1, 0, 1],
+        [1, 1, 1, 1, 0, 1],
+        [0, 0, 1, 1, 1, 1],
+        [0, 0, 1, 1, 0, 0],
+        [0, 0, 1, 1, 0, 0],
+        [1, 1, 1, 0, 1, 1],
+        [1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 0, 0],
+        [1, 1, 0, 1, 1, 1],
         [0, 0, 1, 1, 1, 0],
         [1, 0, 0, 1, 1, 0],
-        [1, 0, 1, 1, 1, 0],
-        [0, 1, 0, 0, 1, 1],
+        [1, 0, 1, 0, 0, 1],
+        [0, 1, 0, 1, 1, 0],
+        [1, 0, 0, 1, 0, 0],
     ],
 }
-app = Tk()
-app.geometry("450x400")
-bookedSeats = []
-canvasOne = Canvas(app, width=450, bg="#8ecae6")
-scrollBarOne = Scrollbar(app, orient=VERTICAL, command=canvasOne.yview)
-containerFrameOne = Frame(canvasOne, padx=10, width=380, bg="#8ecae6")
-canvasOne.create_window((0, 0), window=containerFrameOne, anchor="nw")
-scrollBarOne.pack(side=RIGHT, fill=Y)
-canvasOne.pack(fill=BOTH, expand=1, side=LEFT)
-canvasOne.configure(yscrollcommand=scrollBarOne.set)
-canvasOne.bind(
-    "<Configure>",
-    lambda e: canvasOne.configure(scrollregion=canvasOne.bbox("all")),
-)
-# row0---------------------------------------------------
-emptySpaceOne1 = Label(containerFrameOne, text="", width=15, bg="#8ecae6")
-emptySpaceOne1.grid(row=0, column=0)
-departureLabelOne = Label(containerFrameOne, text="Departure", width=20, bg="#8ecae6")
-departureLabelOne.grid(row=0, column=1, pady=20)
-arrivalLabelOne = Label(containerFrameOne, text="Arrival", width=20, bg="#8ecae6")
-arrivalLabelOne.grid(row=0, column=2)
-# row0---------------------------------------------------
-# row1---------------------------------------------------
-airportOne = Label(containerFrameOne, text="Airport", width=18, bg="#8ecae6")
-airportOne.grid(row=1, column=0)
-aiportDepartureOne = Label(
-    containerFrameOne,
-    text=data["departure"]["airport"],
-    width=20,
-    height=4,
-    wraplength=100,
-    bg="#8ecae6",
-)
-aiportDepartureOne.grid(row=1, column=1, pady=7)
-airportArrivalOne = Label(
-    containerFrameOne,
-    text=data["arrival"]["airport"],
-    width=20,
-    bg="#8ecae6",
-    height=4,
-    wraplength=100,
-)
-airportArrivalOne.grid(row=1, column=2)
-# row1---------------------------------------------------
-# row2---------------------------------------------------
-airportCodeOne = Label(containerFrameOne, text="Airport Code", width=18, bg="#8ecae6")
-airportCodeOne.grid(row=2, column=0)
-airportCodeDepartureOne = Label(
-    containerFrameOne,
-    text=data["departure"]["iata"],
-    width=20,
-    height=4,
-    wraplength=100,
-    bg="#8ecae6",
-)
-airportCodeDepartureOne.grid(row=2, column=1, pady=7)
-airportCodeArrivalOne = Label(
-    containerFrameOne,
-    text=data["arrival"]["iata"],
-    width=20,
-    bg="#8ecae6",
-    wraplength=100,
-)
-airportCodeArrivalOne.grid(row=2, column=2)
-# row2---------------------------------------------------
 
-# row3---------------------------------------------------
-cityOne = Label(containerFrameOne, text="City", width=18, bg="#8ecae6")
-cityOne.grid(row=3, column=0)
-cityDepartureOne = Label(
-    containerFrameOne,
-    text=data["departure"]["timezone"],
-    width=20,
-    height=4,
-    wraplength=100,
-    bg="#8ecae6",
-)
-cityDepartureOne.grid(row=3, column=1, pady=7)
-cityArrivalOne = Label(
-    containerFrameOne,
-    text=data["arrival"]["timezone"],
-    width=20,
-    bg="#8ecae6",
-    wraplength=100,
-)
-cityArrivalOne.grid(row=3, column=2)
-# row3---------------------------------------------------
-# row4---------------------------------------------------
-terminalOne = Label(containerFrameOne, text="Terminal", width=18, bg="#8ecae6")
-terminalOne.grid(row=4, column=0)
-terminalDepartureOne = Label(
-    containerFrameOne,
-    text=data["departure"]["terminal"],
-    width=20,
-    height=4,
-    wraplength=100,
-    bg="#8ecae6",
-)
-terminalDepartureOne.grid(row=4, column=1, pady=7)
-terminalArrivalOne = Label(
-    containerFrameOne,
-    text=data["arrival"]["terminal"],
-    width=20,
-    bg="#8ecae6",
-    wraplength=100,
-)
-terminalArrivalOne.grid(row=4, column=2)
-# row4---------------------------------------------------
-# row5---------------------------------------------------
-conArrTime = datetime.datetime(*data["arrival"]["arrivalUTCTime"])
-conDeptTime = datetime.datetime(*data["departure"]["departureUTCTime"])
-timeOne = Label(containerFrameOne, text="Time", width=18, bg="#8ecae6")
-timeOne.grid(row=5, column=0)
-timeDepartureOne = Label(
-    containerFrameOne,
-    text=conDeptTime.strftime("%d/%m/%Y  %H:%M:%S"),
-    width=20,
-    height=4,
-    wraplength=100,
-    bg="#8ecae6",
-)
-timeDepartureOne.grid(row=5, column=1, pady=7)
-timeArrivalOne = Label(
-    containerFrameOne,
-    text=conArrTime.strftime("%d/%m/%Y  %H:%M:%S"),
-    width=20,
-    bg="#8ecae6",
-    wraplength=100,
-)
-timeArrivalOne.grid(row=5, column=2)
-# row5---------------------------------------------------
-# row6---------------------------------------------------
-gateOne = Label(containerFrameOne, text="Gate", width=18, bg="#8ecae6")
-gateOne.grid(row=6, column=0)
-gateDepartureOne = Label(
-    containerFrameOne,
-    text=data["departure"]["gate"],
-    width=20,
-    height=4,
-    wraplength=100,
-    bg="#8ecae6",
-)
-gateDepartureOne.grid(row=6, column=1, pady=7)
-gateArrivalOne = Label(
-    containerFrameOne,
-    text=data["arrival"]["gate"],
-    width=20,
-    bg="#8ecae6",
-    wraplength=100,
-)
-gateArrivalOne.grid(row=6, column=2)
-# row6---------------------------------------------------
-# row7---------------------------------------------------
-travelTimeLabelOne = Label(
-    containerFrameOne,
-    text="Travel Time",
-    width=18,
-    bg="#8ecae6",
-)
-travelTimeLabelOne.grid(row=7, column=0)
-travelTimeOne = Label(
-    containerFrameOne,
-    text=str(data["travelTime"]["hours"])
-    + "hrs  "
-    + str(data["travelTime"]["minutes"])
-    + "mins",
-    font="Halevtia 12",
-    width=20,
-    height=4,
-    wraplength=100,
-    bg="#8ecae6",
-)
-travelTimeOne.grid(row=7, column=1, pady=7, columnspan=2)
-# row7---------------------------------------------------
-# row8---------------------------------------------------
-airlineLabelOne = Label(containerFrameOne, text="Airline", width=18, bg="#8ecae6")
-airlineLabelOne.grid(row=8, column=0)
-airlineOne = Label(
-    containerFrameOne,
-    text=data["airlineName"],
-    width=20,
-    height=4,
-    font="Halevtia 12",
-    wraplength=100,
-    bg="#8ecae6",
-)
-airlineOne.grid(row=8, column=1, pady=7, columnspan=2)
-# row8---------------------------------------------------
-# row9---------------------------------------------------
-flightNumberLabelOne = Label(
-    containerFrameOne, text="Flight Number", width=18, bg="#8ecae6"
-)
-flightNumberLabelOne.grid(row=9, column=0)
-flightNumberOne = Label(
-    containerFrameOne,
-    text=data["flightNumber"],
-    width=20,
-    height=4,
-    font="Halevtia 12",
-    wraplength=100,
-    bg="#8ecae6",
-)
-flightNumberOne.grid(row=9, column=1, pady=7, columnspan=2)
-# row9---------------------------------------------------
-# row10--------------------------------------------------
-selectSeatLabel = Label(
-    containerFrameOne,
-    text="Select your Seat",
-    bg="#8ecae6",
-    font="Halevtia 12 bold",
-)
-selectSeatLabel.grid(row=10, column=0, columnspan=3, pady=10)
-# row10--------------------------------------------------
-# row11--------------------------------------------------
-# display all the seats----------------------------------
-seatWidth = 2
-padYAxis = 7
-padXAxis = 6
-backgroundSeat = "#f9bc60"
-seatLayoutContainer = Frame(containerFrameOne, bg="#004643")
-for (index, char) in enumerate(ascii_uppercase):
-    seatZero = Button(
-        seatLayoutContainer,
-        text="0",
-        width=seatWidth,
-        bg=backgroundSeat if data["seatsGraph"][index][0] else "#e16162",
-        state=NORMAL if data["seatsGraph"][index][0] else DISABLED,
-    )
-    seatZero.grid(row=index, column=0, pady=padYAxis, padx=padXAxis)
-    seatOne = Button(
-        seatLayoutContainer,
-        text="1",
-        width=seatWidth,
-        bg=backgroundSeat if data["seatsGraph"][index][1] else "#e16162",
-        state=NORMAL if data["seatsGraph"][index][1] else DISABLED,
-    )
-    seatOne.grid(row=index, column=1, pady=padYAxis, padx=padXAxis)
-    seatTwo = Button(
-        seatLayoutContainer,
-        text="2",
-        width=seatWidth,
-        bg=backgroundSeat if data["seatsGraph"][index][2] else "#e16162",
-        state=NORMAL if data["seatsGraph"][index][2] else DISABLED,
-    )
-    seatTwo.grid(row=index, column=2, pady=padYAxis, padx=padXAxis)
-    seatIdLabel = Label(seatLayoutContainer, text=char, fg="#fff", bg="#004643")
-    seatIdLabel.grid(row=index, column=3, pady=padYAxis, padx=padXAxis)
-    seatThree = Button(
-        seatLayoutContainer,
-        text="3",
-        width=seatWidth,
-        bg=backgroundSeat if data["seatsGraph"][index][3] else "#e16162",
-        state=NORMAL if data["seatsGraph"][index][3] else DISABLED,
-    )
-    seatThree.grid(row=index, column=4, pady=padYAxis, padx=padXAxis)
-    seatFour = Button(
-        seatLayoutContainer,
-        text="4",
-        width=seatWidth,
-        bg=backgroundSeat if data["seatsGraph"][index][4] else "#e16162",
-        state=NORMAL if data["seatsGraph"][index][4] else DISABLED,
-    )
-    seatFour.grid(row=index, column=5, pady=padYAxis, padx=padXAxis)
-    seatFive = Button(
-        seatLayoutContainer,
-        text="5",
-        width=seatWidth,
-        bg=backgroundSeat if data["seatsGraph"][index][5] else "#e16162",
-        state=NORMAL if data["seatsGraph"][index][5] else DISABLED,
-    )
-    seatFive.grid(row=index, column=6, pady=padYAxis, padx=padXAxis)
-seatLayoutContainer.grid(row=11, column=0, columnspan=4, pady=10)
-# row11--------------------------------------------------
-app.mainloop()
+bookedSeats = [
+    {"row": "H", "column": 4},
+    {"row": "I", "column": 4},
+    {"row": "I", "column": 5},
+    {"row": "I", "column": 3},
+    {"row": "I", "column": 2},
+    {"row": "H", "column": 2},
+    {"row": "H", "column": 1},
+    {"row": "H", "column": 0},
+    {"row": "I", "column": 0},
+    {"row": "J", "column": 0},
+]
+
+user = {
+    "name": "python",
+    "email": "python@gmail.com",
+    "password": b"$2b$12$HFhrVice.ZGx2vBohPmwROR0du7lgvbSHwBHIq1krdYgUSireQ2/i",
+    "dob": "4/14/20",
+    "gender": "Male",
+    "phonenumber": "12345789575",
+}
+
+
+class fluck:
+    def __init__(self, data, deptTime, arrTime, cost):
+        self.app = Tk()
+        self.app.geometry("450x400")
+        self.canvasTwo = Canvas(self.app, width=450, bg="#8ecae6")
+        self.scrollBarTwo = Scrollbar(
+            self.app, orient=VERTICAL, command=self.canvasTwo.yview
+        )
+        self.confirmBookingFrame = Frame(
+            self.canvasTwo, padx=10, width=380, bg="#8ecae6"
+        )
+        self.canvasTwo.create_window(
+            (0, 0), window=self.confirmBookingFrame, anchor="nw"
+        )
+        self.confirmBookingFrame.configure(bg="#232946")
+        # self.confirmBookingFrame.pack(fill=BOTH, expand=1, side=LEFT)
+        backButton = Button(
+            self.confirmBookingFrame,
+            text="Back",
+            bg="#eebbc3",
+            padx=10,
+            pady=5,
+            relief="flat",
+            command=lambda d=data, dT=deptTime, aT=arrTime, c=cost: self.showFlightInfo(
+                d, dT, aT, c
+            ),
+        )
+        backButton.grid(row=0, column=0, pady=20, padx=20)
+        Label(
+            self.confirmBookingFrame,
+            text="Confirm Your Bookings",
+            font="Halvetica 12 bold",
+            fg="#fffffe",
+            bg="#232946",
+        ).grid(row=1, column=0, columnspan=4, pady=50)
+        # Show Details-------------------------------
+        # Departure----------------------------------
+        self.confirmDepartureLabel = Label(
+            self.confirmBookingFrame,
+            text="Depature Airport : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.confirmDepartureLabel.grid(row=3, column=0, padx=20, pady=20)
+        self.confirmDeparture = Label(
+            self.confirmBookingFrame,
+            text=data["departure"]["airport"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.confirmDeparture.grid(row=3, column=1, padx=40, pady=20)
+        # Departure----------------------------------
+        # Arrival------------------------------------
+        self.confirmArrivalLabel = Label(
+            self.confirmBookingFrame,
+            text="Arrival Airport  : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmArrivalLabel.grid(row=4, column=0, padx=20, pady=20)
+        self.confirmArrival = Label(
+            self.confirmBookingFrame,
+            text=data["arrival"]["airport"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmArrival.grid(row=4, column=1, padx=40, pady=20)
+        # Arrival------------------------------------
+        # Airlines-----------------------------------
+        self.confirmAirlineLabel = Label(
+            self.confirmBookingFrame,
+            text="Airlines : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmAirlineLabel.grid(row=5, column=0, padx=20, pady=20)
+        self.confirmAirline = Label(
+            self.confirmBookingFrame,
+            text=data["airlineName"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmAirline.grid(row=5, column=1, padx=40, pady=20)
+        # Airlines-----------------------------------
+        # Departure Time-----------------------------
+        self.confirmDepartureTimeLabel = Label(
+            self.confirmBookingFrame,
+            text="Date & Time : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmDepartureTimeLabel.grid(row=6, column=0, padx=20, pady=20)
+        self.confirmDepartureTime = Label(
+            self.confirmBookingFrame,
+            text=deptTime,
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmDepartureTime.grid(row=6, column=1, padx=40, pady=20)
+        # DepartureTime-----------------------------
+        self.scrollBarTwo.pack(side=RIGHT, fill=Y)
+        self.canvasTwo.pack(fill=BOTH, expand=1, side=LEFT)
+        self.canvasTwo.configure(yscrollcommand=self.scrollBarTwo.set)
+        self.canvasTwo.bind(
+            "<Configure>",
+            lambda e: self.canvasTwo.configure(scrollregion=self.canvasTwo.bbox("all")),
+        )
+        self.app.mainloop()
+
+
+f = fluck(data, "2020/11/10 21:35:00", "2020/11/11 13:55:00", 23424)
