@@ -48,19 +48,210 @@ class SearchPage:
             sep="\n",
         )
         self.app = Tk()
-        self.app.geometry("450x400")
-        self.app.configure(bg="#232946")
+        self.app.geometry("450x450")
+        self.canvasTwo = Canvas(self.app, width=400, bg="#8ecae6")
+        self.scrollBarTwo = Scrollbar(
+            self.app, orient=VERTICAL, command=self.canvasTwo.yview
+        )
+        self.confirmBookingFrame = Frame(
+            self.canvasTwo,
+            bg="#8ecae6",
+            padx=10,
+            width=410,
+        )
+        self.canvasTwo.create_window(
+            (0, 0), window=self.confirmBookingFrame, anchor="nw"
+        )
+        self.confirmBookingFrame.configure(bg="#232946")
         backButton = Button(
-            self.app,
+            self.confirmBookingFrame,
             text="Back",
             bg="#eebbc3",
             padx=10,
             pady=5,
+            relief="flat",
             command=lambda d=data, dT=deptTime, aT=arrTime, c=cost: self.showFlightInfo(
                 d, dT, aT, c
             ),
         )
         backButton.grid(row=0, column=0, pady=20, padx=20)
+        Label(
+            self.confirmBookingFrame,
+            text="Confirm Your Booking",
+            font="Halvetica 12 bold",
+            fg="#fffffe",
+            bg="#232946",
+        ).grid(row=1, column=0, columnspan=4, pady=50)
+        # Show Details-------------------------------
+        # Departure----------------------------------
+        self.confirmDepartureLabel = Label(
+            self.confirmBookingFrame,
+            text="Depature Airport : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.confirmDepartureLabel.grid(row=3, column=0, padx=20, pady=20)
+        self.confirmDeparture = Label(
+            self.confirmBookingFrame,
+            text=data["departure"]["airport"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.confirmDeparture.grid(row=3, column=1, padx=40, pady=20)
+        # Departure----------------------------------
+        # Arrival------------------------------------
+        self.confirmArrivalLabel = Label(
+            self.confirmBookingFrame,
+            text="Arrival Airport  : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmArrivalLabel.grid(row=4, column=0, padx=20, pady=20)
+        self.confirmArrival = Label(
+            self.confirmBookingFrame,
+            text=data["arrival"]["airport"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmArrival.grid(row=4, column=1, padx=40, pady=20)
+        # Arrival------------------------------------
+        # Airlines-----------------------------------
+        self.confirmAirlineLabel = Label(
+            self.confirmBookingFrame,
+            text="Airlines : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmAirlineLabel.grid(row=5, column=0, padx=20, pady=20)
+        self.confirmAirline = Label(
+            self.confirmBookingFrame,
+            text=data["airlineName"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmAirline.grid(row=5, column=1, padx=40, pady=20)
+        # Airlines-----------------------------------
+        # Departure Time-----------------------------
+        self.confirmDepartureTimeLabel = Label(
+            self.confirmBookingFrame,
+            text="Date & Time : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmDepartureTimeLabel.grid(row=6, column=0, padx=20, pady=20)
+        self.confirmDepartureTime = Label(
+            self.confirmBookingFrame,
+            text=deptTime.strftime("%Y/%m/%d %H:%M:%S"),
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.confirmDepartureTime.grid(row=6, column=1, padx=40, pady=20)
+        # Departure Time----------------------------
+        # Show Email--------------------------------
+        self.userEmailVar = StringVar()
+        self.userEmailVar.set(self.user["email"])
+        self.emailLabel = Label(
+            self.confirmBookingFrame,
+            text="Email : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.emailLabel.grid(row=7, column=0)
+        self.emailInput = Entry(
+            self.confirmBookingFrame, textvariable=self.userEmailVar
+        )
+        self.emailInput.grid(row=7, column=1, padx=40, pady=30)
+        # Show Email--------------------------------
+        # Get Name and age of all seats-------------
+        self.containerFrameForSeatEntry = Frame(
+            self.confirmBookingFrame, padx=10, width=410, pady=20
+        )
+        self.containerFrameForSeatEntry.config(bg="#eebbc3")
+        self.infoOfBookedSeats = []
+        for (index, seat) in enumerate(self.bookedSeats):
+            self.infoOfBookedSeats.append([StringVar(), IntVar()])
+            self.infoOfBookedSeats[index][0].set("Enter Name")
+            self.infoOfBookedSeats[index][1].set("Enter Age")
+            self.seatLabel = Label(
+                self.containerFrameForSeatEntry,
+                text=seat["row"] + " " + str(seat["column"]),
+                padx=10,
+                pady=10,
+                bg="#eebbc3",
+            )
+            self.seatLabel.grid(
+                row=index,
+                column=0,
+                padx=20,
+                pady=10,
+            )
+            self.seatNameEntry = Entry(
+                self.containerFrameForSeatEntry,
+                textvariable=self.infoOfBookedSeats[index][0],
+                justify=CENTER,
+                relief=RIDGE,
+            )
+            self.seatNameEntry.grid(row=index, column=1)
+            Label(
+                self.containerFrameForSeatEntry,
+                text="    ",
+                bg="#eebbc3",
+            ).grid(row=index, column=2, padx=20, pady=10)
+            self.seatAgeEntry = Entry(
+                self.containerFrameForSeatEntry,
+                textvariable=self.infoOfBookedSeats[index][1],
+                justify=CENTER,
+                relief=RIDGE,
+            )
+            self.seatAgeEntry.grid(row=index, column=3)
+
+        self.containerFrameForSeatEntry.grid(
+            row=8,
+            column=0,
+            columnspan=2,
+        )
+
+        # Get Name and age of all seats-------------
+        # Get Number--------------------------------
+        self.phoneNumberLabel = Label(
+            self.confirmBookingFrame,
+            text="Phone Number : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.phoneNumberLabel.grid(row=9, column=0, padx=40, pady=20)
+        self.phoneNumberVar = IntVar()
+        self.phoneNumberInput = Entry(
+            self.confirmBookingFrame, textvariable=self.phoneNumberVar
+        )
+        self.phoneNumberInput.grid(row=9, column=1)
+        # Get Number--------------------------------
+        # Confirm Booking Button--------------------
+        self.confirmBookingButton = Button(
+            self.confirmBookingFrame,
+            text="Book Tickets",
+            padx=20,
+            pady=10,
+            bg="#eebbc3",
+            relief=RAISED,
+            activebackground="#b8c1ec",
+        )
+        self.confirmBookingButton.grid(row=10, column=0, columnspan=2, padx=40, pady=20)
+        # Confirm Booking Button-----  ---------------
+        self.scrollBarTwo.pack(side=RIGHT, fill=Y)
+        self.canvasTwo.pack(fill=BOTH, expand=1, side=LEFT)
+        self.canvasTwo.configure(yscrollcommand=self.scrollBarTwo.set)
+        self.canvasTwo.bind(
+            "<Configure>",
+            lambda e: self.canvasTwo.configure(scrollregion=self.canvasTwo.bbox("all")),
+        )
+
         self.app.mainloop()
 
     def updateSeatBookings(self, data, index, col):
