@@ -4,6 +4,7 @@ from tkinter import messagebox
 from PIL import ImageTk, Image, ImageFile
 import pymongo
 import bcrypt
+import json
 import re
 import pytz
 import datetime
@@ -32,21 +33,18 @@ class SearchPage:
     departure = set()
     arrival = set()
 
+    def finishBooking(self):
+        messagebox.showinfo(
+            "Success",
+            "Booking Confirmed , Check {0} for Ticket".format(self.emailInput.get()),
+        )
+
     def confirmBooking(self, data, deptTime, arrTime, cost):
         try:
             if self.app:
                 self.app.destroy()
         except:
             pass
-        print(
-            data,
-            deptTime.strftime("%Y/%m/%d %H:%M:%S"),
-            arrTime.strftime("%Y/%m/%d %H:%M:%S"),
-            cost,
-            self.bookedSeats,
-            self.user,
-            sep="\n",
-        )
         self.app = Tk()
         self.app.geometry("450x450")
         self.canvasTwo = Canvas(self.app, width=400, bg="#8ecae6")
@@ -154,8 +152,6 @@ class SearchPage:
         self.confirmDepartureTime.grid(row=6, column=1, padx=40, pady=20)
         # Departure Time----------------------------
         # Show Email--------------------------------
-        self.userEmailVar = StringVar()
-        self.userEmailVar.set(self.user["email"])
         self.emailLabel = Label(
             self.confirmBookingFrame,
             text="Email : ",
@@ -164,8 +160,9 @@ class SearchPage:
         )
         self.emailLabel.grid(row=7, column=0)
         self.emailInput = Entry(
-            self.confirmBookingFrame, textvariable=self.userEmailVar
+            self.confirmBookingFrame,
         )
+        self.emailInput.insert(0, self.user["email"])
         self.emailInput.grid(row=7, column=1, padx=40, pady=30)
         # Show Email--------------------------------
         # Get Name and age of all seats-------------
@@ -175,9 +172,7 @@ class SearchPage:
         self.containerFrameForSeatEntry.config(bg="#eebbc3")
         self.infoOfBookedSeats = []
         for (index, seat) in enumerate(self.bookedSeats):
-            self.infoOfBookedSeats.append([StringVar(), IntVar()])
-            self.infoOfBookedSeats[index][0].set("Enter Name")
-            self.infoOfBookedSeats[index][1].set("Enter Age")
+
             self.seatLabel = Label(
                 self.containerFrameForSeatEntry,
                 text=seat["row"] + " " + str(seat["column"]),
@@ -191,25 +186,29 @@ class SearchPage:
                 padx=20,
                 pady=10,
             )
-            self.seatNameEntry = Entry(
-                self.containerFrameForSeatEntry,
-                textvariable=self.infoOfBookedSeats[index][0],
-                justify=CENTER,
-                relief=RIDGE,
+            self.infoOfBookedSeats.append(
+                [
+                    Entry(
+                        self.containerFrameForSeatEntry,
+                        justify=CENTER,
+                        relief=RIDGE,
+                    ),
+                    Entry(
+                        self.containerFrameForSeatEntry,
+                        justify=CENTER,
+                        relief=RIDGE,
+                    ),
+                ]
             )
-            self.seatNameEntry.grid(row=index, column=1)
+            self.infoOfBookedSeats[-1][0].insert(0, "Enter Name")
+            self.infoOfBookedSeats[-1][0].grid(row=index, column=1)
             Label(
                 self.containerFrameForSeatEntry,
                 text="    ",
                 bg="#eebbc3",
             ).grid(row=index, column=2, padx=20, pady=10)
-            self.seatAgeEntry = Entry(
-                self.containerFrameForSeatEntry,
-                textvariable=self.infoOfBookedSeats[index][1],
-                justify=CENTER,
-                relief=RIDGE,
-            )
-            self.seatAgeEntry.grid(row=index, column=3)
+            self.infoOfBookedSeats[-1][1].insert(0, "Enter Age")
+            self.infoOfBookedSeats[-1][1].grid(row=index, column=3)
 
         self.containerFrameForSeatEntry.grid(
             row=8,
@@ -226,10 +225,7 @@ class SearchPage:
             fg="#fffffe",
         )
         self.phoneNumberLabel.grid(row=9, column=0, padx=40, pady=20)
-        self.phoneNumberVar = IntVar()
-        self.phoneNumberInput = Entry(
-            self.confirmBookingFrame, textvariable=self.phoneNumberVar
-        )
+        self.phoneNumberInput = Entry(self.confirmBookingFrame)
         self.phoneNumberInput.grid(row=9, column=1)
         # Get Number--------------------------------
         # Confirm Booking Button--------------------
@@ -241,6 +237,7 @@ class SearchPage:
             bg="#eebbc3",
             relief=RAISED,
             activebackground="#b8c1ec",
+            command=self.finishBooking,
         )
         self.confirmBookingButton.grid(row=10, column=0, columnspan=2, padx=40, pady=20)
         # Confirm Booking Button-----  ---------------
