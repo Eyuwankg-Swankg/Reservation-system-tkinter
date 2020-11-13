@@ -4,19 +4,21 @@ from tkinter import messagebox
 from PIL import ImageTk, Image, ImageFile
 import pymongo
 import bcrypt
-import json
 import re
 import pytz
 import datetime
 from dateutil import tz
 import random
 from string import ascii_uppercase
+import keyring
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # intialize DB
 mongoDB = pymongo.MongoClient(
-    "mongodb+srv://Eyuwankg:eyuwankg@mern.kvhji.mongodb.net/OOAD?retryWrites=true&w=majority"
+    "mongodb+srv://Eyuwankg:{0}@mern.kvhji.mongodb.net/OOAD?retryWrites=true&w=majority".format(
+        keyring.get_password("mongoDB", "mongoPassword")
+    )
 )
 db = mongoDB["OOAD"]
 profileCollection = db["profiles"]
