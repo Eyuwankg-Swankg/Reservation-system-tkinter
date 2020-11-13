@@ -597,13 +597,17 @@ class SearchPage:
     def displayFlights(self):
         if self.intVar.get() == 0:
             self.scrollFrame.destroy()
-        self.scrollFrame = Frame(self.searchPage, width=450)
+        self.scrollFrame = Frame(
+            self.searchPage, width=400, bg="#55423d", padx=20, pady=20
+        )
         self.intVar.set(0)
-        self.canvas = Canvas(self.scrollFrame, width=450)
+        self.canvas = Canvas(self.scrollFrame, width=400, bg="#55423d")
         self.scrollBar = Scrollbar(
             self.scrollFrame, orient=VERTICAL, command=self.canvas.yview
         )
-        self.containerFrame = Frame(self.canvas, padx=10, width=380)
+        self.containerFrame = Frame(
+            self.canvas, padx=10, width=380, pady=10, bg="#ffc0ad"
+        )
         self.canvas.create_window((0, 0), window=self.containerFrame, anchor="nw")
         for (index, flightData) in enumerate(self.allFlights[self.selectedDate.get()]):
             # ---------calculate Departure Time-----------
@@ -638,7 +642,7 @@ class SearchPage:
                 continue
             self.flightDisplayFrame = Frame(
                 self.containerFrame,
-                bg="#B9BFC7",
+                bg="#55423d",
                 padx=20,
                 pady=10,
                 width=210,
@@ -856,13 +860,15 @@ class SearchPage:
         self.user = user
         self.intVar = IntVar()
         self.intVar.set(1)
-        self.searchPage = Frame(self.parent, bg="#51575A", padx=10, pady=10)
+        self.searchPage = Frame(
+            self.parent, bg="#271c19", padx=30, pady=30, width=450, height=400
+        )
         self.flightData = flightCollection.find()
-        self.searchPage.grid(row=0, column=0)
+        self.searchPage.pack(fill=BOTH, expand=1)
         for flight in self.flightData:
             self.allFlights[flight["date"]] = flight["data"]
             self.date.append(flight["date"])
-        self.frameForPack = Frame(self.searchPage)
+        self.frameForPack = Frame(self.searchPage, bg="#ffc0ad", padx=20, pady=20)
         # date list
         self.selectedDate = StringVar()
         self.selectedDate.set("Select Date")
@@ -871,9 +877,9 @@ class SearchPage:
         self.getFromTo = Button(
             self.frameForPack,
             text="Get",
-            activebackground="#d34745",
+            activebackground="#e78fb3",
             activeforeground="#fff",
-            bg="#333945",
+            bg="#271c19",
             fg="#fff",
             relief=RAISED,
             bd=4,
@@ -918,17 +924,22 @@ class SignIn:
 
     def __init__(self, parent):
         self.parent = parent
-        self.signInPage = Frame(self.parent, bg="#51575A", padx=100, pady=100)
+        self.signInPage = Frame(
+            self.parent,
+            bg="#232946",
+            padx=100,
+            pady=100,
+        )
 
         # Email
-        self.emailLabel = Label(self.signInPage, text="Email", bg="#51575A", fg="#fff")
+        self.emailLabel = Label(self.signInPage, text="Email", bg="#232946", fg="#fff")
         self.emailLabel.grid(row=0, column=0)
         self.emailInput = Entry(self.signInPage)
         self.emailInput.grid(row=0, column=1)
 
         # Password
         self.passwordLabel = Label(
-            self.signInPage, text="Password", bg="#51575A", padx=10, fg="#fff"
+            self.signInPage, text="Password", bg="#232946", padx=10, fg="#fff"
         )
         self.passwordLabel.grid(row=1, column=0)
         self.passwordInput = Entry(self.signInPage, show="*")
@@ -938,10 +949,10 @@ class SignIn:
         self.signInButton = Button(
             self.signInPage,
             text="Sign In",
-            activebackground="#d34745",
-            activeforeground="#fff",
-            bg="#333945",
-            fg="#fff",
+            activebackground="#b8c1ec",
+            activeforeground="#121629",
+            bg="#eebbc3",
+            fg="#000",
             relief=RAISED,
             bd=4,
             command=self.siginUser,
@@ -951,10 +962,9 @@ class SignIn:
         self.back = Button(
             self.signInPage,
             text="Back",
-            activebackground="#403835",
-            activeforeground="#fff",
-            bg="#4B1A23",
-            fg="#fff",
+            activebackground="#eebbc3",
+            bg="#b8c1ec",
+            fg="#000",
             relief=RAISED,
             bd=4,
             command=self.goBack,
@@ -970,7 +980,11 @@ class Register:
         self.var1.set(self.calendar.get_date())
         self.DOBInput.destroy()
         self.DOBInput = Button(
-            self.registerPage, text=self.var1.get(), command=self.datePicker
+            self.registerPage,
+            text=self.var1.get(),
+            command=self.datePicker,
+            bg="#ff8906",
+            fg="#fffffe",
         )
         self.DOBInput.grid(row=3, column=1, pady=5)
 
@@ -1039,7 +1053,7 @@ class Register:
         self.parent = parent
         self.registerPage = Frame(
             self.parent,
-            bg="#51575A",
+            bg="#0f0e17",
             padx=100,
             pady=100,
         )
@@ -1048,7 +1062,7 @@ class Register:
         self.nameLabel = Label(
             self.registerPage,
             text="Name",
-            bg="#51575A",
+            bg="#0f0e17",
             fg="#fff",
             padx=10,
         )
@@ -1057,14 +1071,14 @@ class Register:
         self.nameInput.grid(row=0, column=1, pady=5)
         # Email
         self.emailLabel = Label(
-            self.registerPage, text="Email", bg="#51575A", fg="#fff"
+            self.registerPage, text="Email", bg="#0f0e17", fg="#fff"
         )
         self.emailLabel.grid(row=1, column=0)
         self.emailInput = Entry(self.registerPage)
         self.emailInput.grid(row=1, column=1)
         # Password
         self.passwordLabel = Label(
-            self.registerPage, text="Password", bg="#51575A", padx=10, fg="#fff"
+            self.registerPage, text="Password", bg="#0f0e17", padx=10, fg="#fff"
         )
         self.passwordLabel.grid(row=2, column=0)
         self.passwordInput = Entry(self.registerPage, show="*")
@@ -1073,30 +1087,40 @@ class Register:
         self.var1 = StringVar()
         self.var1.set("Select")
         self.DOBLabel = Label(
-            self.registerPage, text="DOB", bg="#51575A", padx=10, fg="#fff"
+            self.registerPage, text="DOB", bg="#0f0e17", padx=10, fg="#fff"
         )
         self.DOBLabel.grid(row=3, column=0)
         self.DOBInput = Button(
-            self.registerPage, text=self.var1.get(), command=self.datePicker
+            self.registerPage,
+            text=self.var1.get(),
+            bg="#ff8906",
+            fg="#fffffe",
+            command=self.datePicker,
         )
         self.DOBInput.grid(row=3, column=1, pady=5)
         # Gender
         self.genderLabel = Label(
-            self.registerPage, text="Gender", bg="#51575A", padx=10, fg="#fff"
+            self.registerPage, text="Gender", bg="#0f0e17", padx=10, fg="#fff"
         )
         self.genderLabel.grid(column=0, row=4, pady=10)
         self.genderVar = IntVar()
         self.maleButton = Radiobutton(
-            self.registerPage, text="Male", variable=self.genderVar, value=1
+            self.registerPage,
+            text="Male",
+            variable=self.genderVar,
+            value=1,
         )
         self.femaleButton = Radiobutton(
-            self.registerPage, text="Female", variable=self.genderVar, value=2
+            self.registerPage,
+            text="Female",
+            variable=self.genderVar,
+            value=2,
         )
         self.maleButton.grid(row=4, column=1, pady=10)
         self.femaleButton.grid(row=4, column=2, pady=10)
         # Phone Number
         self.numberLabel = Label(
-            self.registerPage, text="Phone Number", bg="#51575A", padx=10, fg="#fff"
+            self.registerPage, text="Phone Number", bg="#0f0e17", padx=10, fg="#fff"
         )
         self.numberLabel.grid(column=0, row=5)
         self.numberInput = Entry(self.registerPage)
@@ -1105,9 +1129,9 @@ class Register:
         self.registerButton = Button(
             self.registerPage,
             text="Register",
-            activebackground="#403835",
-            activeforeground="#fff",
-            bg="#333945",
+            activebackground="#f25f4c",
+            activeforeground="#fffffe",
+            bg="#ff8906",
             fg="#fff",
             relief=RAISED,
             bd=4,
@@ -1118,9 +1142,10 @@ class Register:
         self.back = Button(
             self.registerPage,
             text="Back",
-            activebackground="#403835",
+            # activebackground="#403835",
+            activebackground="#e53170",
             activeforeground="#fff",
-            bg="#4B1A23",
+            bg="#f25f4c",
             fg="#fff",
             relief=RAISED,
             bd=4,
@@ -1133,7 +1158,8 @@ class Register:
 class IndexPage:
     def __init__(self, parent):
         self.parent = parent
-        self.index = Frame(self.parent, bg="#38447C")
+        # self.index = Frame(self.parent, bg="#38447C")
+        self.index = Frame(self.parent, bg="#232946")
         Label(self.index, image=IndexPageImage).grid(
             row=0, column=0, padx=10, pady=10, columnspan=2
         )
