@@ -10,7 +10,9 @@ import datetime
 from dateutil import tz
 import random
 from string import ascii_uppercase
+import string
 import keyring
+import yagmail
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -37,15 +39,59 @@ class SearchPage:
 
     def finishBooking(self, data, deptTime, arrTime, cost, index):
         # update seat locally
-        for seat in self.bookedSeats:
+        seats=[]
+        for (index,seat) in enumerate(self.bookedSeats):
             data["seatsGraph"][ascii_uppercase.index(seat["row"])][seat["column"]] = 0
+            seats.append({
+                 "row":seat["row"],
+                 "column":seat["column"],
+                 "name":self.infoOfBookedSeats[index][0].get(),
+                 "age":self.infoOfBookedSeats[index][1].get()
+                })
         self.allFlights[self.selectedDate.get()][index] = data
         # update booked seats in DB
         flightCollection.update_one(
             {"date": self.selectedDate.get()},
             {"$set": {"data": self.allFlights[self.selectedDate.get()]}},
         )
-        print(data)
+        #update tickets in User Profile
+        updateBookingData={
+            'departure': data["departure"],
+            'arrival':data["arrival"] ,
+            'travelTime': data["travelTime"],
+            'airlineName': data["airlineName"],
+            'flightNumber': data["flightNumber"],
+            "bookedSeats":seats,
+            "email":self.emailInput.get(),
+            "phoneNumber":self.phoneNumberInput.get(),
+            "bookingID":''.join(random.choices(string.ascii_uppercase +
+                             string.digits, k = 9)),    
+            "cost":cost
+        }
+        self.user["bookedSeats"].append(updateBookingData)
+        profileCollection.update_one({"_id":self.user["_id"]},{"$set":{"bookedSeats":self.user["bookedSeats"]}})
+        # send ticket to gmail
+        emailClient=yagmail.SMTP("messikarthik13@gmail.com",keyring.get_password("gmail","messikarthik13@gmail.com"))
+        subjects="Ticket for {0} on {1}".format(updateBookingData["airlineName"],
+                                                str(updateBookingData["departure"]["departureUTCTime"][2])+"/"+
+                                                str(updateBookingData["departure"]["departureUTCTime"][1])+"/"+
+                                                str(updateBookingData["departure"]["departureUTCTime"][0])+"   "+
+                                                str(updateBookingData["departure"]["departureUTCTime"][3])+":"+
+                                                str(updateBookingData["departure"]["departureUTCTime"][4])
+                                                )
+        contents="                        {0}               \n  Your Booking ID : {1}\n  Departure : \n     Airport : {2}\n     Code : {3}\n     Terminal : {4}\n     Gate : {5}\n     Time : {6}\n  Arrival   : \n     Airport : {7}\n     Code : {8}\n     Terminal : {9}\n     Gate : {10}\n     Time : {11}\n  Flight Number : {12}\n  Cost : {13}".format(
+                    updateBookingData["airlineName"],updateBookingData["bookingID"],updateBookingData["departure"]["airport"],
+                    updateBookingData["departure"]["iata"],updateBookingData["departure"]["terminal"],updateBookingData["departure"]["gate"],deptTime.strftime("%d/%m/%Y  %H:%M:%S"),updateBookingData["arrival"]["airport"],
+                    updateBookingData["arrival"]["iata"],updateBookingData["arrival"]["terminal"],updateBookingData["arrival"]["gate"],arrTime.strftime("%d/%m/%Y  %H:%M:%S"),updateBookingData["flightNumber"],updateBookingData["cost"]
+            )
+        seatGraphForEmail=[]
+        for i in seats:
+            seatGraphForEmail.append(
+                "\n  {0}      {1}     {2}\n".format(i["row"]+str(i["column"]),i["name"],i["age"])
+                )
+        contents+="".join(seatGraphForEmail)
+        contents+="\n  Phone Number : {0}\n".format(updateBookingData["phoneNumber"])
+        emailClient.send(self.emailInput.get(),subjects,contents)
         # show confirm booked message
         messagebox.showinfo(
             "Success",
@@ -81,8 +127,8 @@ class SearchPage:
             padx=10,
             pady=5,
             relief="flat",
-            command=lambda d=data, dT=deptTime, aT=arrTime, c=cost: self.showFlightInfo(
-                d, dT, aT, c
+            command=lambda d=data, dT=deptTime, aT=arrTime, c=cost,i=index: self.showFlightInfo(
+                d, dT, aT, c,i
             ),
         )
         backButton.grid(row=0, column=0, pady=20, padx=20)
@@ -835,7 +881,7 @@ class SearchPage:
                     self.details,
                     self.convertDepartureTime,
                     self.convertArrivalTime,
-                    self.totalCost,
+                    self.tripCost,
                     index,
                 ),
             )
@@ -928,6 +974,11 @@ class SearchPage:
         for flight in self.flightData:
             self.allFlights[flight["date"]] = flight["data"]
             self.date.append(flight["date"])
+        # profile page link
+        self.frameForProfile=Frame(self.searchPage, bg="#000aaa", padx=20, pady=20)
+        self.profileButton=Button(self.frameForProfile,text=self.user["name"],padx=20,pady=20)
+        self.frameForProfile.pack(fill=BOTH, expand=1)
+        # frame for date
         self.frameForPack = Frame(self.searchPage, bg="#ffc0ad", padx=20, pady=20)
         # date list
         self.selectedDate = StringVar()
@@ -1099,6 +1150,7 @@ class Register:
             "dob": self.var1.get(),
             "gender": "Male" if self.genderVar.get() == 1 else "Female",
             "phonenumber": self.numberInput.get(),
+            "bookedSeats":[]
         }
         key = profileCollection.find_one({"email": userDetails["email"]})
         if key == None:
