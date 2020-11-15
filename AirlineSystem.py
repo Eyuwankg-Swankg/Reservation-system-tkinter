@@ -273,14 +273,17 @@ class SearchPage:
         seatWidth = 2
         padYAxis = 7
         padXAxis = 10
-        backgroundSeat = "#f9bc60"
-        selectedSeat = "#abd1c6"
-        self.seatLayoutContainer = Frame(self.containerFrameOne, bg="#004643")
+        backgroundSeat = "#8bd3dd"
+        fgSeats = "#001858"
+        # selectedSeat = "#abd1c6"
+        selectedSeat = "#f582ae"
+        self.seatLayoutContainer = Frame(self.containerFrameOne, bg="#f3d2c1")
         for (index, char) in enumerate(ascii_uppercase):
             self.seatZero = Button(
                 self.seatLayoutContainer,
                 text="0",
                 width=seatWidth,
+                fg=fgSeats,
                 bg=selectedSeat
                 if {"row": char, "column": 0} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][0] else "#e16162"),
@@ -292,6 +295,7 @@ class SearchPage:
                 self.seatLayoutContainer,
                 text="1",
                 width=seatWidth,
+                fg=fgSeats,
                 bg=selectedSeat
                 if {"row": char, "column": 1} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][1] else "#e16162"),
@@ -303,6 +307,7 @@ class SearchPage:
                 self.seatLayoutContainer,
                 text="2",
                 width=seatWidth,
+                fg=fgSeats,
                 bg=selectedSeat
                 if {"row": char, "column": 2} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][2] else "#e16162"),
@@ -311,13 +316,17 @@ class SearchPage:
             )
             self.seatTwo.grid(row=index, column=2, pady=padYAxis, padx=padXAxis)
             seatIdLabel = Label(
-                self.seatLayoutContainer, text=char, fg="#fff", bg="#004643"
+                self.seatLayoutContainer,
+                text=char,
+                fg="#000",
+                bg="#f3d2c1",
             )
             seatIdLabel.grid(row=index, column=3, pady=padYAxis, padx=padXAxis)
             self.seatThree = Button(
                 self.seatLayoutContainer,
                 text="3",
                 width=seatWidth,
+                fg=fgSeats,
                 bg=selectedSeat
                 if {"row": char, "column": 3} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][3] else "#e16162"),
@@ -329,6 +338,7 @@ class SearchPage:
                 self.seatLayoutContainer,
                 text="4",
                 width=seatWidth,
+                fg=fgSeats,
                 bg=selectedSeat
                 if {"row": char, "column": 4} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][4] else "#e16162"),
@@ -340,6 +350,7 @@ class SearchPage:
                 self.seatLayoutContainer,
                 text="5",
                 width=seatWidth,
+                fg=fgSeats,
                 bg=selectedSeat
                 if {"row": char, "column": 5} in self.bookedSeats
                 else (backgroundSeat if data["seatsGraph"][index][5] else "#e16162"),
@@ -359,11 +370,11 @@ class SearchPage:
         self.app = Tk()
         self.app.geometry("450x400")
         self.bookedSeats = []
-        self.canvasOne = Canvas(self.app, width=450, bg="#8ecae6")
+        self.canvasOne = Canvas(self.app, width=450, bg="#fef6e4")
         self.scrollBarOne = Scrollbar(
             self.app, orient=VERTICAL, command=self.canvasOne.yview
         )
-        self.containerFrameOne = Frame(self.canvasOne, padx=10, width=380, bg="#8ecae6")
+        self.containerFrameOne = Frame(self.canvasOne, padx=10, width=380, bg="#fef6e4")
         self.canvasOne.create_window((0, 0), window=self.containerFrameOne, anchor="nw")
         self.scrollBarOne.pack(side=RIGHT, fill=Y)
         self.canvasOne.pack(fill=BOTH, expand=1, side=LEFT)
@@ -373,20 +384,20 @@ class SearchPage:
             lambda e: self.canvasOne.configure(scrollregion=self.canvasOne.bbox("all")),
         )
         # row0---------------------------------------------------
-        emptySpaceOne1 = Label(self.containerFrameOne, text="", width=15, bg="#8ecae6")
+        emptySpaceOne1 = Label(self.containerFrameOne, text="", width=15, bg="#fef6e4")
         emptySpaceOne1.grid(row=0, column=0)
         departureLabelOne = Label(
-            self.containerFrameOne, text="Departure", width=20, bg="#8ecae6"
+            self.containerFrameOne, text="Departure", width=20, bg="#fef6e4"
         )
         departureLabelOne.grid(row=0, column=1, pady=20)
         arrivalLabelOne = Label(
-            self.containerFrameOne, text="Arrival", width=20, bg="#8ecae6"
+            self.containerFrameOne, text="Arrival", width=20, bg="#fef6e4"
         )
         arrivalLabelOne.grid(row=0, column=2)
         # row0---------------------------------------------------
         # row1---------------------------------------------------
         airportOne = Label(
-            self.containerFrameOne, text="Airport", width=18, bg="#8ecae6"
+            self.containerFrameOne, text="Airport", width=18, bg="#fef6e4"
         )
         airportOne.grid(row=1, column=0)
         aiportDepartureOne = Label(
@@ -395,14 +406,14 @@ class SearchPage:
             width=20,
             height=4,
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         aiportDepartureOne.grid(row=1, column=1, pady=7)
         airportArrivalOne = Label(
             self.containerFrameOne,
             text=data["arrival"]["airport"],
             width=20,
-            bg="#8ecae6",
+            bg="#fef6e4",
             height=4,
             wraplength=100,
         )
@@ -410,7 +421,7 @@ class SearchPage:
         # row1---------------------------------------------------
         # row2---------------------------------------------------
         airportCodeOne = Label(
-            self.containerFrameOne, text="Airport Code", width=18, bg="#8ecae6"
+            self.containerFrameOne, text="Airport Code", width=18, bg="#fef6e4"
         )
         airportCodeOne.grid(row=2, column=0)
         airportCodeDepartureOne = Label(
@@ -419,21 +430,21 @@ class SearchPage:
             width=20,
             height=4,
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         airportCodeDepartureOne.grid(row=2, column=1, pady=7)
         airportCodeArrivalOne = Label(
             self.containerFrameOne,
             text=data["arrival"]["iata"],
             width=20,
-            bg="#8ecae6",
+            bg="#fef6e4",
             wraplength=100,
         )
         airportCodeArrivalOne.grid(row=2, column=2)
         # row2---------------------------------------------------
 
         # row3---------------------------------------------------
-        cityOne = Label(self.containerFrameOne, text="City", width=18, bg="#8ecae6")
+        cityOne = Label(self.containerFrameOne, text="City", width=18, bg="#fef6e4")
         cityOne.grid(row=3, column=0)
         cityDepartureOne = Label(
             self.containerFrameOne,
@@ -441,21 +452,21 @@ class SearchPage:
             width=20,
             height=4,
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         cityDepartureOne.grid(row=3, column=1, pady=7)
         cityArrivalOne = Label(
             self.containerFrameOne,
             text=data["arrival"]["timezone"],
             width=20,
-            bg="#8ecae6",
+            bg="#fef6e4",
             wraplength=100,
         )
         cityArrivalOne.grid(row=3, column=2)
         # row3---------------------------------------------------
         # row4---------------------------------------------------
         terminalOne = Label(
-            self.containerFrameOne, text="Terminal", width=18, bg="#8ecae6"
+            self.containerFrameOne, text="Terminal", width=18, bg="#fef6e4"
         )
         terminalOne.grid(row=4, column=0)
         terminalDepartureOne = Label(
@@ -464,20 +475,20 @@ class SearchPage:
             width=20,
             height=4,
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         terminalDepartureOne.grid(row=4, column=1, pady=7)
         terminalArrivalOne = Label(
             self.containerFrameOne,
             text=data["arrival"]["terminal"],
             width=20,
-            bg="#8ecae6",
+            bg="#fef6e4",
             wraplength=100,
         )
         terminalArrivalOne.grid(row=4, column=2)
         # row4---------------------------------------------------
         # row5---------------------------------------------------
-        timeOne = Label(self.containerFrameOne, text="Time", width=18, bg="#8ecae6")
+        timeOne = Label(self.containerFrameOne, text="Time", width=18, bg="#fef6e4")
         timeOne.grid(row=5, column=0)
         timeDepartureOne = Label(
             self.containerFrameOne,
@@ -485,20 +496,20 @@ class SearchPage:
             width=20,
             height=4,
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         timeDepartureOne.grid(row=5, column=1, pady=7)
         timeArrivalOne = Label(
             self.containerFrameOne,
             text=arrTime.strftime("%d/%m/%Y  %H:%M:%S"),
             width=20,
-            bg="#8ecae6",
+            bg="#fef6e4",
             wraplength=100,
         )
         timeArrivalOne.grid(row=5, column=2)
         # row5---------------------------------------------------
         # row6---------------------------------------------------
-        gateOne = Label(self.containerFrameOne, text="Gate", width=18, bg="#8ecae6")
+        gateOne = Label(self.containerFrameOne, text="Gate", width=18, bg="#fef6e4")
         gateOne.grid(row=6, column=0)
         gateDepartureOne = Label(
             self.containerFrameOne,
@@ -506,14 +517,14 @@ class SearchPage:
             width=20,
             height=4,
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         gateDepartureOne.grid(row=6, column=1, pady=7)
         gateArrivalOne = Label(
             self.containerFrameOne,
             text=data["arrival"]["gate"],
             width=20,
-            bg="#8ecae6",
+            bg="#fef6e4",
             wraplength=100,
         )
         gateArrivalOne.grid(row=6, column=2)
@@ -523,7 +534,7 @@ class SearchPage:
             self.containerFrameOne,
             text="Travel Time",
             width=18,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         travelTimeLabelOne.grid(row=7, column=0)
         travelTimeOne = Label(
@@ -536,13 +547,13 @@ class SearchPage:
             width=20,
             height=4,
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         travelTimeOne.grid(row=7, column=1, pady=7, columnspan=2)
         # row7---------------------------------------------------
         # row8---------------------------------------------------
         airlineLabelOne = Label(
-            self.containerFrameOne, text="Airline", width=18, bg="#8ecae6"
+            self.containerFrameOne, text="Airline", width=18, bg="#fef6e4"
         )
         airlineLabelOne.grid(row=8, column=0)
         airlineOne = Label(
@@ -552,13 +563,13 @@ class SearchPage:
             height=4,
             font="Halevtia 12",
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         airlineOne.grid(row=8, column=1, pady=7, columnspan=2)
         # row8---------------------------------------------------
         # row9---------------------------------------------------
         flightNumberLabelOne = Label(
-            self.containerFrameOne, text="Flight Number", width=18, bg="#8ecae6"
+            self.containerFrameOne, text="Flight Number", width=18, bg="#fef6e4"
         )
         flightNumberLabelOne.grid(row=9, column=0)
         flightNumberOne = Label(
@@ -568,7 +579,7 @@ class SearchPage:
             height=4,
             font="Halevtia 12",
             wraplength=100,
-            bg="#8ecae6",
+            bg="#fef6e4",
         )
         flightNumberOne.grid(row=9, column=1, pady=7, columnspan=2)
         # row9---------------------------------------------------
@@ -576,7 +587,7 @@ class SearchPage:
         selectSeatLabel = Label(
             self.containerFrameOne,
             text="Select your Seat",
-            bg="#8ecae6",
+            bg="#fef6e4",
             font="Halevtia 12 bold",
         )
         selectSeatLabel.grid(row=10, column=0, columnspan=3, pady=10)
@@ -587,9 +598,14 @@ class SearchPage:
         self.bookTickets = Button(
             self.containerFrameOne,
             text="Book Your Tickets",
+            bg="#f3d2c1",
+            fg="#001858",
+            font="Halvetica 8 bold",
             command=lambda d=data, dT=deptTime, aT=arrTime, c=cost: self.confirmBooking(
                 d, dT, aT, c
             ),
+            padx=10,
+            pady=5,
         )
         self.bookTickets.grid(row=12, column=0, columnspan=3, rowspan=2, pady=20)
         self.app.mainloop()
