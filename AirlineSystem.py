@@ -35,13 +35,24 @@ class SearchPage:
     departure = set()
     arrival = set()
 
-    def finishBooking(self):
+    def finishBooking(self, data, deptTime, arrTime, cost, index):
+        # update seat locally
+        for seat in self.bookedSeats:
+            data["seatsGraph"][ascii_uppercase.index(seat["row"])][seat["column"]] = 0
+        self.allFlights[self.selectedDate.get()][index] = data
+        # update booked seats in DB
+        flightCollection.update_one(
+            {"date": self.selectedDate.get()},
+            {"$set": {"data": self.allFlights[self.selectedDate.get()]}},
+        )
+        print(data)
+        # show confirm booked message
         messagebox.showinfo(
             "Success",
             "Booking Confirmed , Check {0} for Ticket".format(self.emailInput.get()),
         )
 
-    def confirmBooking(self, data, deptTime, arrTime, cost):
+    def confirmBooking(self, data, deptTime, arrTime, cost, index):
         try:
             if self.app:
                 self.app.destroy()
@@ -228,6 +239,7 @@ class SearchPage:
         )
         self.phoneNumberLabel.grid(row=9, column=0, padx=40, pady=20)
         self.phoneNumberInput = Entry(self.confirmBookingFrame)
+        self.phoneNumberInput.insert(0, self.user["phonenumber"])
         self.phoneNumberInput.grid(row=9, column=1)
         # Get Number--------------------------------
         # Confirm Booking Button--------------------
@@ -239,7 +251,9 @@ class SearchPage:
             bg="#eebbc3",
             relief=RAISED,
             activebackground="#b8c1ec",
-            command=self.finishBooking,
+            command=lambda d=data, dt=deptTime, at=arrTime, c=cost, i=index: self.finishBooking(
+                d, dt, at, cost, i
+            ),
         )
         self.confirmBookingButton.grid(row=10, column=0, columnspan=2, padx=40, pady=20)
         # Confirm Booking Button-----  ---------------
@@ -361,7 +375,7 @@ class SearchPage:
             self.seatLayoutContainer.grid(row=11, column=0, columnspan=4, pady=10)
         # row11--------------------------------------------------
 
-    def showFlightInfo(self, data, deptTime, arrTime, cost):
+    def showFlightInfo(self, data, deptTime, arrTime, cost, index):
         try:
             if self.app:
                 self.app.destroy()
@@ -601,8 +615,8 @@ class SearchPage:
             bg="#f3d2c1",
             fg="#001858",
             font="Halvetica 8 bold",
-            command=lambda d=data, dT=deptTime, aT=arrTime, c=cost: self.confirmBooking(
-                d, dT, aT, c
+            command=lambda d=data, dT=deptTime, aT=arrTime, c=cost, i=index: self.confirmBooking(
+                d, dT, aT, c, i
             ),
             padx=10,
             pady=5,
@@ -822,6 +836,7 @@ class SearchPage:
                     self.convertDepartureTime,
                     self.convertArrivalTime,
                     self.totalCost,
+                    index,
                 ),
             )
         if flag == 0:
