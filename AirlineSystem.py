@@ -98,44 +98,415 @@ class Profile:
         self.search = SearchPage(self.parent, self.user)
 
     # show ticket info
-    def showTicketInfo(self, ticket, departureTime, arrivalTime, index):
+    def showTicketInfo(self, ticket, deptTime, arrTime, index):
         try:
             if self.app:
                 self.app.destroy()
         except:
             pass
         self.app = Tk()
-        self.app.geometry("450x450")
+        self.app.geometry("490x450")
         self.app.title(ticket["airlineName"])
         self.canvasTicket = Canvas(self.app, width=400, bg="#8ecae6")
         self.scrollBarTicket = Scrollbar(
             self.app, orient=VERTICAL, command=self.canvasTicket.yview
         )
         self.ticketFrame = Frame(
-            self.canvasTicket,
-            bg="#8ecae6",
-            padx=10,
-            width=410,
+            self.canvasTicket, bg="#8ecae6", padx=20, width=410, pady=20
         )
         self.canvasTicket.create_window((0, 0), window=self.ticketFrame, anchor="nw")
         self.ticketFrame.configure(bg="#232946")
         # ------------------------------------------------S
+        Label(
+            self.ticketFrame,
+            text="Your Ticket",
+            padx=50,
+            pady=20,
+            font="havetica 12 bold",
+            bg="#232946",
+            fg="#fffffe",
+        ).grid(row=0, column=0, columnspan=2)
+        # Booking ID--------------------------------------S
+        self.bookingIDLabel = Label(
+            self.ticketFrame,
+            text="Booking ID : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.bookingIDLabel.grid(row=1, column=0, padx=20, pady=20)
+        self.bookingIDShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["bookingID"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.bookingIDShowLabel.grid(row=1, column=1, padx=40, pady=20)
+        # Booking ID--------------------------------------E
+        # Email-------------------------------------------S
+        self.emailLabel = Label(
+            self.ticketFrame,
+            text="Email : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.emailLabel.grid(row=2, column=0, padx=20, pady=20)
+        self.emailShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["email"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.emailShowLabel.grid(row=2, column=1, padx=40, pady=20)
+        # Email-------------------------------------------E
+        # Phone Number------------------------------------S
+        self.phoneNumberLabel = Label(
+            self.ticketFrame,
+            text="Phone Number : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.phoneNumberLabel.grid(row=3, column=0, padx=20, pady=20)
+        self.phoneNumberShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["phoneNumber"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.phoneNumberShowLabel.grid(row=3, column=1, padx=40, pady=20)
+        # Phone Number------------------------------------E
+        # Airlines----------------------------------------S
+        self.airlineLabel = Label(
+            self.ticketFrame,
+            text="Airlines : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.airlineLabel.grid(row=4, column=0, padx=20, pady=20)
+        self.airlineShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["airlineName"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.airlineShowLabel.grid(row=4, column=1, padx=40, pady=20)
+        # Airlines----------------------------------------E
+        # Flight Number-----------------------------------S
+        self.flightNumberLabel = Label(
+            self.ticketFrame,
+            text="Flight Number : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.flightNumberLabel.grid(row=5, column=0, padx=20, pady=20)
+        self.flightNumberShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["flightNumber"],
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.flightNumberShowLabel.grid(row=5, column=1, padx=40, pady=20)
+        # Flight Number-----------------------------------E
         # Departure---------------------------------------S
+        Label(
+            self.ticketFrame,
+            text="Departure : ",
+            padx=50,
+            pady=20,
+            font="havetica 12 bold",
+            bg="#232946",
+            fg="#fffffe",
+        ).grid(row=6, column=0, columnspan=2)
+        # Departure Airport-------------------------------S
         self.departureLabel = Label(
             self.ticketFrame,
-            text="Depature Airport : ",
+            text="Airport : ",
             bg="#232946",
             fg="#fffffe",
         )
-        self.departureLabel.grid(row=0, column=0, padx=20, pady=20)
+        self.departureLabel.grid(row=7, column=0, padx=20, pady=20)
         self.departureShowLabel = Label(
             self.ticketFrame,
             text=ticket["departure"]["airport"],
             bg="#232946",
             fg="#fffffe",
         )
-        self.departureShowLabel.grid(row=0, column=1, padx=40, pady=20)
+        self.departureShowLabel.grid(row=7, column=1, padx=40, pady=20)
+        # Departure Airport-------------------------------E
+        # Departure Airport Code--------------------------S
+        self.departureAirportCodeLabel = Label(
+            self.ticketFrame,
+            text="Airport Code : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.departureAirportCodeLabel.grid(row=8, column=0, padx=20, pady=20)
+        self.departureAirportCodeShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["departure"]["iata"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.departureAirportCodeShowLabel.grid(row=8, column=1, padx=40, pady=20)
+        # Departure Airport Code--------------------------E
+        # Departure Time----------------------------------S
+        self.departureTimeLabel = Label(
+            self.ticketFrame,
+            text="Date & Time : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.departureTimeLabel.grid(row=9, column=0, padx=20, pady=20)
+        self.departureTimeShowLabel = Label(
+            self.ticketFrame,
+            text=deptTime.strftime("%Y/%m/%d %H:%M:%S"),
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.departureTimeShowLabel.grid(row=9, column=1, padx=40, pady=20)
+        # Departure Time----------------------------------E
+        # Departure Airport Terminal----------------------S
+        self.departureAirportTerminalLabel = Label(
+            self.ticketFrame,
+            text="Terminal : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.departureAirportTerminalLabel.grid(row=10, column=0, padx=20, pady=20)
+        self.departureAirportTerminalShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["departure"]["terminal"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.departureAirportTerminalShowLabel.grid(row=10, column=1, padx=40, pady=20)
+        # Departure Airport Terminal----------------------E
+        # Departure Airport Gate--------------------------S
+        self.departureAirportGateLabel = Label(
+            self.ticketFrame,
+            text="Gate : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.departureAirportGateLabel.grid(row=11, column=0, padx=20, pady=20)
+        self.departureAirportGateShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["departure"]["gate"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.departureAirportGateShowLabel.grid(row=11, column=1, padx=40, pady=20)
+        # Departure Airport Gate--------------------------E
         # Departure---------------------------------------E
+        # Arrival-----------------------------------------S
+        # Arrival Airport---------------------------------S
+        Label(
+            self.ticketFrame,
+            text="Arrival : ",
+            padx=50,
+            pady=20,
+            font="havetica 12 bold",
+            bg="#232946",
+            fg="#fffffe",
+        ).grid(row=12, column=0, columnspan=2)
+        # Arrival Airport---------------------------------S
+        self.arrivalLabel = Label(
+            self.ticketFrame,
+            text="Airport : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.arrivalLabel.grid(row=13, column=0, padx=20, pady=20)
+        self.arrivalShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["arrival"]["airport"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.arrivalShowLabel.grid(row=13, column=1, padx=40, pady=20)
+        # Arrival Airport---------------------------------E
+        # Arrival Airport Code----------------------------S
+        self.arrivalAirportCodeLabel = Label(
+            self.ticketFrame,
+            text="Airport Code : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.arrivalAirportCodeLabel.grid(row=14, column=0, padx=20, pady=20)
+        self.arrivalAirportCodeShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["arrival"]["iata"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.arrivalAirportCodeShowLabel.grid(row=14, column=1, padx=40, pady=20)
+        # Arrival Airport Code----------------------------E
+        # Arrival Time------------------------------------S
+        self.arrivalTimeLabel = Label(
+            self.ticketFrame,
+            text="Date & Time : ",
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.arrivalTimeLabel.grid(row=15, column=0, padx=20, pady=20)
+        self.arrivalTimeShowLabel = Label(
+            self.ticketFrame,
+            text=arrTime.strftime("%Y/%m/%d %H:%M:%S"),
+            bg="#232946",
+            fg="#fffffe",
+            wraplength=150,
+        )
+        self.arrivalTimeShowLabel.grid(row=15, column=1, padx=40, pady=20)
+        # Arrival Time------------------------------------E
+        # Arrival Airport Terminal------------------------S
+        self.arrivalAirportTerminalLabel = Label(
+            self.ticketFrame,
+            text="Terminal : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.arrivalAirportTerminalLabel.grid(row=16, column=0, padx=20, pady=20)
+        self.arrivalAirportTerminalShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["arrival"]["terminal"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.arrivalAirportTerminalShowLabel.grid(row=16, column=1, padx=40, pady=20)
+        # Arrival Airport Terminal------------------------E
+        # Arrival Airport Gate----------------------------S
+        self.arrivalAirportGateLabel = Label(
+            self.ticketFrame,
+            text="Gate : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.arrivalAirportGateLabel.grid(row=17, column=0, padx=20, pady=20)
+        self.arrivalAirportGateShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["arrival"]["gate"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.arrivalAirportGateShowLabel.grid(row=17, column=1, padx=40, pady=20)
+        # Arrival Airport Gate----------------------------E
+        # Arrival-----------------------------------------E
+        # Travel Time-------------------------------------S
+        self.travelTimeLabel = Label(
+            self.ticketFrame,
+            text="Travel Time : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.travelTimeLabel.grid(row=18, column=0, padx=20, pady=20)
+        self.travelTimeShowLabel = Label(
+            self.ticketFrame,
+            text=str(ticket["travelTime"]["hours"])
+            + "hrs "
+            + str(ticket["travelTime"]["minutes"])
+            + "mins",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.travelTimeShowLabel.grid(row=18, column=1, padx=40, pady=20)
+        # Travel Time-------------------------------------E
+        # Show Seat Details-------------------------------S
+        Label(
+            self.ticketFrame,
+            text="Seat Allotment : ",
+            padx=50,
+            pady=20,
+            font="havetica 12 bold",
+            bg="#232946",
+            fg="#fffffe",
+        ).grid(row=19, column=0, columnspan=2)
+        self.showSeatDetailsFrame = Frame(self.ticketFrame, padx=30, width=410, pady=20)
+        self.showSeatDetailsFrame.config(bg="#eebbc3")
+        for (seatIndex, seatInfo) in enumerate(ticket["bookedSeats"]):
+            # Seat Number---------------------------------S
+            self.seatNumberLabel = Label(
+                self.showSeatDetailsFrame,
+                text=seatInfo["row"] + str(seatInfo["column"]),
+                padx=10,
+                pady=10,
+                bg="#eebbc3",
+            )
+            self.seatNumberLabel.grid(
+                row=seatIndex,
+                column=0,
+                padx=20,
+                pady=10,
+            )
+            # Seat Number---------------------------------E
+            # Name----------------------------------------S
+            self.seatNameLabel = Label(
+                self.showSeatDetailsFrame,
+                wraplength=150,
+                padx=10,
+                pady=10,
+                bg="#eebbc3",
+                text=seatInfo["name"],
+            )
+            self.seatNameLabel.grid(
+                row=seatIndex,
+                column=1,
+                padx=20,
+                pady=10,
+            )
+            # Name----------------------------------------E
+            # Age-----------------------------------------S
+            self.seatAgeLabel = Label(
+                self.showSeatDetailsFrame,
+                wraplength=150,
+                padx=10,
+                pady=10,
+                bg="#eebbc3",
+                text=seatInfo["age"],
+            )
+            self.seatAgeLabel.grid(
+                row=seatIndex,
+                column=2,
+                padx=20,
+                pady=10,
+            )
+            # Age-----------------------------------------E
+        self.showSeatDetailsFrame.grid(row=20, column=0, columnspan=2, pady=20)
+        # Show Seat Details-------------------------------E
+        # Toatl Cost--------------------------------------S
+        self.costLabel = Label(
+            self.ticketFrame,
+            text="Cost : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.costLabel.grid(row=21, column=0, pady=20)
+        self.individualCostLabel = Label(
+            self.ticketFrame,
+            text=str(len(ticket["bookedSeats"])) + " x " + str(ticket["cost"]),
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.individualCostLabel.grid(row=21, column=1, pady=20)
+        self.totalCostLabel = Label(
+            self.ticketFrame,
+            text=str(len(ticket["bookedSeats"]) * ticket["cost"]),
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.totalCostLabel.grid(row=21, column=2, pady=20)
+        # Toatl Cost--------------------------------------E
         # ------------------------------------------------E
         self.scrollBarTicket.pack(side=RIGHT, fill=Y)
         self.canvasTicket.pack(fill=BOTH, expand=1, side=LEFT)
