@@ -30,6 +30,456 @@ flightCollection = db["flights"]
 Home = Tk()
 IndexPageImage = ImageTk.PhotoImage(Image.open("./HomePage.jpg"))
 
+
+# Profile Page
+class Profile:
+    # function to update profile in DB
+    def updateProfile(self):
+        self.user["name"] = self.nameInput.get()
+        self.user["gender"] = "Male" if self.genderVar.get() == 1 else "Female"
+        self.user["dob"] = self.dobVar.get()
+        self.user["phonenumber"] = self.phoneNumberInput.get()
+        profileCollection.update_one(
+            {"email": self.user["email"]},
+            {
+                "$set": {
+                    "name": self.user["name"],
+                    "gender": self.user["gender"],
+                    "dob": self.user["dob"],
+                    "phonenumber": self.user["phonenumber"],
+                }
+            },
+        )
+
+    # function to re-render datePicker button
+    def getDate(self):
+        self.calendarFrame.destroy()
+        self.dobVar.set(self.calendar.get_date())
+        self.dobInput.destroy()
+        self.dobInput = Button(
+            self.profileFrame,
+            text=self.dobVar.get(),
+            bg="#f582ae",
+            fg="#000",
+            activebackground="#8bd3dd",
+            activeforeground="#001858",
+            padx=5,
+            pady=3,
+            font="Havetica 10 bold",
+            command=self.datePicker,
+            relief=FLAT,
+        )
+        self.dobInput.grid(row=4, column=1, pady=5)
+
+    # Calendar
+    def datePicker(self):
+        self.calendarFrame = Tk()
+        self.calendarFrame.title("Date Picker")
+        self.calendarFrame.configure(bg="#fef6e4")
+        self.calendar = Calendar(self.calendarFrame)
+        self.calendar.pack()
+        self.calendarButton = Button(
+            self.calendarFrame,
+            text="OK",
+            activebackground="#f582ae",
+            activeforeground="#001858",
+            bg="#8bd3dd",
+            fg="#001858",
+            font="Havetica 10 bold",
+            command=self.getDate,
+            padx=5,
+            pady=3,
+            relief=FLAT,
+        )
+        self.calendarButton.pack()
+
+    def goBack(self):
+        self.profileWindow.destroy()
+        self.search = SearchPage(self.parent, self.user)
+
+    # show ticket info
+    def showTicketInfo(self, ticket, departureTime, arrivalTime, index):
+        try:
+            if self.app:
+                self.app.destroy()
+        except:
+            pass
+        self.app = Tk()
+        self.app.geometry("450x450")
+        self.app.title(ticket["airlineName"])
+        self.canvasTicket = Canvas(self.app, width=400, bg="#8ecae6")
+        self.scrollBarTicket = Scrollbar(
+            self.app, orient=VERTICAL, command=self.canvasTicket.yview
+        )
+        self.ticketFrame = Frame(
+            self.canvasTicket,
+            bg="#8ecae6",
+            padx=10,
+            width=410,
+        )
+        self.canvasTicket.create_window((0, 0), window=self.ticketFrame, anchor="nw")
+        self.ticketFrame.configure(bg="#232946")
+        # ------------------------------------------------S
+        # Departure---------------------------------------S
+        self.departureLabel = Label(
+            self.ticketFrame,
+            text="Depature Airport : ",
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.departureLabel.grid(row=0, column=0, padx=20, pady=20)
+        self.departureShowLabel = Label(
+            self.ticketFrame,
+            text=ticket["departure"]["airport"],
+            bg="#232946",
+            fg="#fffffe",
+        )
+        self.departureShowLabel.grid(row=0, column=1, padx=40, pady=20)
+        # Departure---------------------------------------E
+        # ------------------------------------------------E
+        self.scrollBarTicket.pack(side=RIGHT, fill=Y)
+        self.canvasTicket.pack(fill=BOTH, expand=1, side=LEFT)
+        self.canvasTicket.configure(yscrollcommand=self.scrollBarTicket.set)
+        self.canvasTicket.bind(
+            "<Configure>",
+            lambda e: self.canvasTicket.configure(
+                scrollregion=self.canvasTicket.bbox("all")
+            ),
+        )
+
+        self.app.mainloop()
+
+    # show booking histroy
+    def showBookingHistroy(self):
+        self.ticketHistroyFrame = Frame(
+            self.profileFrame, width=550, padx=70, pady=20, bg="#fef6e4"
+        )
+        bgColor = "#f582ae"
+        fgColor = "#000"
+        for (index, ticket) in enumerate(self.user["bookedSeats"]):
+            self.containerFrame = Frame(
+                self.ticketHistroyFrame,
+                bg=bgColor,
+                padx=30,
+                pady=20,
+                highlightbackground="#001858",
+                highlightthickness=3,
+            )
+            # row0 ---------------------------------------S
+            self.emptySpace1 = Label(
+                self.containerFrame,
+                text="                                 ",
+                bg=bgColor,
+            )
+            self.emptySpace1.grid(row=0, column=0, pady=0)
+
+            # airline Name
+            self.airlineName = Label(
+                self.containerFrame,
+                text=ticket["airlineName"],
+                font="Helvetica 12 bold",
+                bg=bgColor,
+                fg=fgColor,
+            )
+            self.airlineName.grid(row=0, column=1, pady=0)
+
+            self.emptySpace2 = Label(
+                self.containerFrame,
+                text="                                 ",
+                bg=bgColor,
+            )
+            self.emptySpace2.grid(row=0, column=2, pady=0)
+            # row0 ---------------------------------------E
+            # row1 ---------------------------------------S
+            self.departureAirport = Label(
+                self.containerFrame,
+                text=ticket["departure"]["airport"],
+                bg=bgColor,
+                fg=fgColor,
+                wraplength=150,
+            )
+            self.departureAirport.grid(row=1, column=0)
+            self.emptySpaceOne = Label(
+                self.containerFrame, text=" ", fg=fgColor, bg=bgColor, padx=100, pady=10
+            )
+            self.emptySpaceOne.grid(row=1, column=1)
+            self.arrivalAirport = Label(
+                self.containerFrame,
+                text=ticket["arrival"]["airport"],
+                bg=bgColor,
+                fg=fgColor,
+                wraplength=150,
+            )
+            self.arrivalAirport.grid(row=1, column=2)
+            # row1 ---------------------------------------E
+            # row2 ---------------------------------------S
+            # ---------calculate Departure Time-----------S
+            self.convertDepartureTime = datetime.datetime(
+                *ticket["departure"]["departureUTCTime"]
+            )
+            self.convertDepartureTime = self.convertDepartureTime.replace(
+                tzinfo=tz.gettz("UTC")
+            )
+            self.convertDepartureTime = self.convertDepartureTime.astimezone(
+                tz.tzlocal()
+            )
+            # ---------calculate Departure Time-----------E
+            # ---------calculate Arrival Time-------------S
+            self.convertArrivalTime = datetime.datetime(
+                *ticket["arrival"]["arrivalUTCTime"]
+            )
+            self.convertArrivalTime = self.convertArrivalTime.replace(
+                tzinfo=tz.gettz("UTC")
+            )
+            self.convertArrivalTime = self.convertArrivalTime.astimezone(tz.tzlocal())
+            # ---------calculate Arrival Time-------------E
+            self.departureTime = Label(
+                self.containerFrame,
+                text=self.convertDepartureTime.strftime("%Y/%m/%d  %H:%M:%S"),
+                bg=bgColor,
+                fg=fgColor,
+                wraplength=150,
+            )
+            self.departureTime.grid(row=2, column=0)
+            self.emptySpaceTwo = Label(
+                self.containerFrame, text=" ", fg=fgColor, bg=bgColor, padx=100, pady=10
+            )
+            self.emptySpaceTwo.grid(row=2, column=1)
+            self.arrivalTime = Label(
+                self.containerFrame,
+                text=self.convertArrivalTime.strftime("%Y/%m/%d  %H:%M:%S"),
+                bg=bgColor,
+                fg=fgColor,
+                wraplength=150,
+            )
+            self.arrivalTime.grid(row=2, column=2)
+            # row2 ---------------------------------------E
+            # row3 ---------------------------------------S
+            self.ticketCount = Label(
+                self.containerFrame,
+                text=str(len(ticket["bookedSeats"])) + " ticket",
+                bg=bgColor,
+                fg=fgColor,
+                wraplength=150,
+            )
+            self.ticketCount.grid(row=3, column=0)
+            self.emptySpaceThree = Label(
+                self.containerFrame, text=" ", fg=fgColor, bg=bgColor, padx=100, pady=10
+            )
+            self.emptySpaceThree.grid(row=3, column=1)
+            self.totalCost = Label(
+                self.containerFrame,
+                text=len(ticket["bookedSeats"]) * ticket["cost"],
+                bg=bgColor,
+                fg=fgColor,
+                wraplength=150,
+            )
+            self.totalCost.grid(row=3, column=2)
+            # row3 ---------------------------------------E
+            self.containerFrame.pack()
+            self.ticket = ticket
+            # add click listerner-------------------------S
+            self.containerFrame.bind(
+                "<Button-1>",
+                lambda event, i=index: self.showTicketInfo(
+                    self.ticket,
+                    self.convertDepartureTime,
+                    self.convertArrivalTime,
+                    i,
+                ),
+            )
+            # add click listerner-------------------------E
+        self.ticketHistroyFrame.grid(row=8, column=0, columnspan=3)
+
+    def __init__(self, user, parent):
+        self.user = user
+        self.parent = parent
+        self.profileWindow = Tk()
+        self.profileWindow.geometry("758x500")
+        self.profileWindow.title(self.user["name"])
+        self.canvas = Canvas(
+            self.profileWindow,
+            width=550,
+            # bg="#eff0f3"
+            bg="#000",
+        )
+        self.scrollBar = Scrollbar(
+            self.profileWindow, orient=VERTICAL, command=self.canvas.yview
+        )
+        # default Colors----------------------------------S
+        bgColor = "#fef6e4"
+        fgColor = "#000"
+        inputBgColor = "#f3d2c1"
+        # default Colors----------------------------------E
+        self.profileFrame = Frame(self.canvas, bg=bgColor, padx=50, width=550, pady=20)
+        self.canvas.create_window((0, 0), window=self.profileFrame, anchor="nw")
+        # display profile---------------------------------S
+        # Back Button ------------------------------------S
+        Button(
+            self.profileFrame,
+            text="Back",
+            padx=10,
+            pady=5,
+            bg="#f582ae",
+            fg="#000",
+            activebackground="#8bd3dd",
+            activeforeground="#001858",
+            command=self.goBack,
+        ).grid(
+            row=0,
+            column=0,
+        )
+        # Back Button ------------------------------------E
+        # name label -------------------------------------S
+        self.nameLabel = Label(
+            self.profileFrame, text="Name : ", bg=bgColor, fg=fgColor, font="bold"
+        )
+        self.nameLabel.grid(row=1, column=0, padx=30, pady=20)
+        # name label -------------------------------------E
+        # name Input -------------------------------------S
+        self.nameInput = Entry(self.profileFrame)
+        self.nameInput.configure(
+            justify=CENTER,
+            bg=inputBgColor,
+            fg=fgColor,
+            font="bold",
+            relief=FLAT,
+        )
+        self.nameInput.insert(0, self.user["name"])
+        self.nameInput.grid(row=1, column=1)
+        # name Input -------------------------------------E
+        # email label -------------------------------------S
+        self.emailLabel = Label(
+            self.profileFrame, text="Email : ", bg=bgColor, fg=fgColor, font="bold"
+        )
+        self.emailLabel.grid(row=2, column=0, padx=30, pady=20)
+        # email label -------------------------------------E
+        # email Input -------------------------------------S
+        self.emailInput = Label(self.profileFrame, text=self.user["email"])
+        self.emailInput.configure(
+            justify=CENTER,
+            bg=bgColor,
+            fg=fgColor,
+            font="bold",
+            relief=FLAT,
+        )
+        self.emailInput.grid(row=2, column=1)
+        # email Input -------------------------------------E
+        # gender label ------------------------------------S
+        self.genderLabel = Label(
+            self.profileFrame, text="Gender : ", bg=bgColor, fg=fgColor, font="bold"
+        )
+        self.genderLabel.grid(row=3, column=0, padx=0, pady=20)
+        # gender label ------------------------------------E
+        # gender Input ------------------------------------S
+        self.genderVar = IntVar()
+        self.genderVar.set(1 if self.user["gender"] == "Male" else 0)
+        self.maleButton = Radiobutton(
+            self.profileFrame,
+            text="Male",
+            variable=self.genderVar,
+            value=1,
+            selectcolor="#fff",
+            bg="#f3d2c1",
+            fg="#000",
+            font="Havetica 10 bold",
+        )
+        self.femaleButton = Radiobutton(
+            self.profileFrame,
+            text="Female",
+            variable=self.genderVar,
+            value=2,
+            selectcolor="#fff",
+            bg="#f3d2c1",
+            fg="#000",
+            font="Havetica 10 bold",
+        )
+        self.maleButton.grid(row=3, column=1)
+        self.femaleButton.grid(row=3, column=2)
+        # gender Input -----------------------------------E
+        # DOB label --------------------------------------S
+        self.dobLabel = Label(
+            self.profileFrame, text="DOB : ", bg=bgColor, fg=fgColor, font="bold"
+        )
+        self.dobLabel.grid(row=4, column=0, padx=30, pady=20)
+        # DOB label --------------------------------------E
+        # DOB Input --------------------------------------S
+        self.dobVar = StringVar()
+        self.dobVar.set(self.user["dob"])
+        self.dobInput = Button(
+            self.profileFrame,
+            text=self.dobVar.get(),
+            bg="#f582ae",
+            fg="#000",
+            activebackground="#8bd3dd",
+            activeforeground="#001858",
+            padx=5,
+            pady=3,
+            font="Havetica 10 bold",
+            command=self.datePicker,
+            relief=FLAT,
+        )
+        self.dobInput.grid(row=4, column=1)
+        # DOB Input --------------------------------------E
+        # Phone Number label------------------------------S
+        self.phoneNumberLabel = Label(
+            self.profileFrame,
+            text="Phone Number : ",
+            bg=bgColor,
+            fg=fgColor,
+            font="bold",
+        )
+        self.phoneNumberLabel.grid(row=5, column=0, padx=30, pady=20)
+        # Phone Number label------------------------------E
+        # Phone Number Input------------------------------S
+        self.phoneNumberInput = Entry(self.profileFrame)
+        self.phoneNumberInput.configure(
+            justify=CENTER,
+            bg=inputBgColor,
+            fg=fgColor,
+            font="bold",
+            relief=FLAT,
+        )
+        self.phoneNumberInput.insert(0, self.user["phonenumber"])
+        self.phoneNumberInput.grid(row=5, column=1)
+        # Phone Number Input------------------------------E
+        # Update Profile Button---------------------------S
+        self.updateProfileButton = Button(
+            self.profileFrame,
+            text="Update Profile",
+            padx=5,
+            pady=3,
+            font="havetica 10 bold",
+            bg="#8bd3dd",
+            fg="#000",
+            activebackground="#f582ae",
+            activeforeground="#001858",
+            command=self.updateProfile,
+        )
+        self.updateProfileButton.grid(row=6, column=0, columnspan=2, pady=20)
+        # Update Profile Button---------------------------E
+        # Show Booked Histroy---------------------------S
+        Label(
+            self.profileFrame,
+            text="Booking Histroy",
+            bg="#f3d2c1",
+            font="havetica 12 bold",
+            padx=100,
+            pady=10,
+        ).grid(row=7, column=0, columnspan=3, pady=30)
+        self.showBookingHistroy()
+        # Show Booked Histroy---------------------------E
+        # display profile---------------------------------E
+        self.scrollBar.pack(side=RIGHT, fill=Y)
+        self.canvas.pack(fill=BOTH, expand=1, side=LEFT)
+        self.canvas.configure(yscrollcommand=self.scrollBar.set)
+        self.canvas.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")),
+        )
+        self.profileWindow.mainloop()
+
+
 # Search Page
 class SearchPage:
     allFlights = {}
@@ -119,7 +569,7 @@ class SearchPage:
         contents += "".join(seatGraphForEmail)
         contents += "\n  Phone Number : {0}\n".format(updateBookingData["phoneNumber"])
         emailClient.send(self.emailInput.get(), subjects, contents)
-        # show confirm booked message
+        # show confirm booked messagex
         messagebox.showinfo(
             "Success",
             "Booking Confirmed , Check {0} for Ticket".format(self.emailInput.get()),
@@ -449,6 +899,7 @@ class SearchPage:
         # row11--------------------------------------------------
 
     def showFlightInfo(self, data, deptTime, arrTime, cost, index):
+        print(self.user)
         try:
             if self.app:
                 self.app.destroy()
