@@ -33,6 +33,97 @@ IndexPageImage = ImageTk.PhotoImage(Image.open("./HomePage.jpg"))
 
 # Profile Page
 class Profile:
+    
+    # function to cancel a ticket
+    def cancelTicket(self):
+        pass
+
+    # function to send ticket to email
+    def sendTicketToEmail(self, ticket, deptTime, arrTime):
+        # send ticket to email
+        emailClient = yagmail.SMTP(
+            "messikarthik13@gmail.com",
+            keyring.get_password("gmail", "messikarthik13@gmail.com"),
+        )
+        subjects = "Ticket for {0} on {1}".format(
+            ticket["airlineName"], deptTime.strftime("%d/%m/%Y %H:%M:%S")
+        )
+        contents = "                        {0}               \n  Your Booking ID : {1}\n  Departure : \n     Airport : {2}\n     Code : {3}\n     Terminal : {4}\n     Gate : {5}\n     Time : {6}\n  Arrival   : \n     Airport : {7}\n     Code : {8}\n     Terminal : {9}\n     Gate : {10}\n     Time : {11}\n  Flight Number : {12}\n  Cost : {13}".format(
+            ticket["airlineName"],
+            ticket["bookingID"],
+            ticket["departure"]["airport"],
+            ticket["departure"]["iata"],
+            ticket["departure"]["terminal"],
+            ticket["departure"]["gate"],
+            deptTime.strftime("%d/%m/%Y  %H:%M:%S"),
+            ticket["arrival"]["airport"],
+            ticket["arrival"]["iata"],
+            ticket["arrival"]["terminal"],
+            ticket["arrival"]["gate"],
+            arrTime.strftime("%d/%m/%Y  %H:%M:%S"),
+            ticket["flightNumber"],
+            ticket["cost"],
+        )
+        seatGraphForEmail = []
+        for i in ticket["bookedSeats"]:
+            seatGraphForEmail.append(
+                "\n  {0}      {1}     {2}\n".format(
+                    i["row"] + str(i["column"]), i["name"], i["age"]
+                )
+            )
+        contents += "".join(seatGraphForEmail)
+        contents += "\n  Phone Number : {0}\n".format(ticket["phoneNumber"])
+        try:
+            emailClient.send(self.checkEmailInput.get(), subjects, contents)
+            messagebox.showinfo(
+                title="Success!!!",
+                message="Check {0} for Ticket".format(self.checkEmailInput.get()),
+            )
+        except:
+            messagebox.showerror(title="Error", message="Error Sending Email")
+        self.ticketCheck.destroy()
+
+    # function to check email for sending ticket
+    def checkEmailForTicketSending(self, ticket, deptTime, arrTime):
+        try:
+            self.ticketCheck.destroy()
+        except:
+            pass
+        self.ticketCheck = Tk()
+        self.ticketCheck.title("Check Email")
+        self.ticketCheck.configure(bg="#55423d", padx=30, pady=15)
+        self.checkEmailLabel = Label(
+            self.ticketCheck,
+            text="Send Ticket to : ",
+            bg="#55423d",
+            fg="#fff",
+            font="havetica 12 bold",
+        )
+        self.checkEmailLabel.grid(row=0, column=0, padx=5, pady=5)
+        self.checkEmailInput = Entry(self.ticketCheck)
+        self.checkEmailInput.configure(
+            justify=CENTER,
+            width=40,
+            bg="#271c19",
+            relief=FLAT,
+            fg="#fff",
+            font="havetica 12 bold",
+        )
+        self.checkEmailInput.insert(0, ticket["email"])
+        self.checkEmailInput.grid(row=0, column=1, padx=10, pady=20)
+        self.sendTicketButton = Button(
+            self.ticketCheck,
+            text=" Send ",
+            bg="#ffc0ad",
+            fg="#271c19",
+            font="havetica 12 bold",
+            command=lambda t=ticket, dt=deptTime, at=arrTime: self.sendTicketToEmail(
+                t, dt, at
+            ),
+        )
+        self.sendTicketButton.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+        self.ticketCheck.mainloop()
+
     # function to update profile in DB
     def updateProfile(self):
         self.user["name"] = self.nameInput.get()
@@ -506,7 +597,33 @@ class Profile:
             fg="#fffffe",
         )
         self.totalCostLabel.grid(row=21, column=2, pady=20)
-        # Toatl Cost--------------------------------------E
+        # Total Cost--------------------------------------E
+        # Cancel Ticket-----------------------------------S
+        self.cancelTicketButton = Button(
+            self.ticketFrame,
+            text="Cancel Ticket",
+            bg="#d34745",
+            fg="#fff",
+            padx=20,
+            pady=10,
+            command=self.cancelTicket,
+        )
+        self.cancelTicketButton.grid(row=22, column=1, pady=20, columnspan=2)
+        # Cancel Ticket-----------------------------------E
+        # Send Ticket To Email----------------------------S
+        self.sendTicketToEmailButton = Button(
+            self.ticketFrame,
+            text="Send Ticket to Email",
+            bg="#eebbc3",
+            fg="#000",
+            padx=20,
+            pady=10,
+            command=lambda t=ticket, dt=deptTime, at=arrTime: self.checkEmailForTicketSending(
+                t, dt, at
+            ),
+        )
+        self.sendTicketToEmailButton.grid(row=22, column=0, pady=20, padx=30)
+        # Send Ticket To Email----------------------------E
         # ------------------------------------------------E
         self.scrollBarTicket.pack(side=RIGHT, fill=Y)
         self.canvasTicket.pack(fill=BOTH, expand=1, side=LEFT)
@@ -897,7 +1014,7 @@ class SearchPage:
             {"_id": self.user["_id"]},
             {"$set": {"bookedSeats": self.user["bookedSeats"]}},
         )
-        # send ticket to gmail
+        # send ticket to email
         emailClient = yagmail.SMTP(
             "messikarthik13@gmail.com",
             keyring.get_password("gmail", "messikarthik13@gmail.com"),
