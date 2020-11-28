@@ -34,13 +34,44 @@ IndexPageImage = ImageTk.PhotoImage(Image.open("./HomePage.jpg"))
 # Profile Page
 class Profile:
     # function to cancel a ticket
-    def cancelTicket(self):
+    def cancelTicket(self, ticket, deptTime):
         self.user["bookedSeats"].remove(ticket)
         profileCollection.update_one(
             {"email": self.user["email"]},
             {"$set": {"bookedSeats": self.user["bookedSeats"]}},
         )
-        # TODO: update in flight DB
+        k = flightCollection.find({"date": deptTime.strftime("%Y-%m-%d")})
+        data = []
+        for i in k:
+            print(i["date"])
+            data = i["data"]
+            break
+        flightIndex = -1
+        for (index, i) in enumerate(data):
+            if (
+                i["departure"]["airport"] == ticket["departure"]["airport"]
+                and i["departure"]["timezone"] == ticket["departure"]["timezone"]
+                and i["departure"]["iata"] == ticket["departure"]["iata"]
+                and i["departure"]["departureUTCTime"]
+                == ticket["departure"]["departureUTCTime"]
+                and i["arrival"]["airport"] == ticket["arrival"]["airport"]
+                and i["arrival"]["timezone"] == ticket["arrival"]["timezone"]
+                and i["arrival"]["iata"] == ticket["arrival"]["iata"]
+                and i["arrival"]["arrivalUTCTime"]
+                == ticket["arrival"]["arrivalUTCTime"]
+                and i["travelTime"] == ticket["travelTime"]
+                and i["airlineName"] == ticket["airlineName"]
+                and i["flightNumber"] == ticket["flightNumber"]
+            ):
+                flightIndex = index
+                break
+        for i in ticket["bookedSeats"]:
+            data[flightIndex]["seatsGraph"][ascii_uppercase.index(i["row"])][
+                i["column"]
+            ] = 1
+        flightCollection.update_one(
+            {"date": deptTime.strftime("%Y-%m-%d")}, {"$set": {"data": data}}
+        )
         messagebox.showinfo("Cancelled", "Ticket Cancelled")
         self.app.destroy()
         self.showBookingHistroy()
@@ -1942,6 +1973,7 @@ class SearchPage:
         self.searchPage = Frame(
             self.parent, bg="#271c19", padx=30, pady=30, width=450, height=400
         )
+        # TODO: implement Porfile Page Button
         self.flightData = flightCollection.find()
         self.searchPage.pack(fill=BOTH, expand=1)
         for flight in self.flightData:
