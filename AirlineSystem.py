@@ -33,10 +33,17 @@ IndexPageImage = ImageTk.PhotoImage(Image.open("./HomePage.jpg"))
 
 # Profile Page
 class Profile:
-    
     # function to cancel a ticket
     def cancelTicket(self):
-        pass
+        self.user["bookedSeats"].remove(ticket)
+        profileCollection.update_one(
+            {"email": self.user["email"]},
+            {"$set": {"bookedSeats": self.user["bookedSeats"]}},
+        )
+        # TODO: update in flight DB
+        messagebox.showinfo("Cancelled", "Ticket Cancelled")
+        self.app.destroy()
+        self.showBookingHistroy()
 
     # function to send ticket to email
     def sendTicketToEmail(self, ticket, deptTime, arrTime):
